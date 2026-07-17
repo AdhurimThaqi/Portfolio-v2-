@@ -13,6 +13,8 @@ Go to **Netlify → Site configuration → Environment variables** and add:
 | ------------------ | -------------------------------------------------------- |
 | `ADMIN_PASSWORD`   | The password you'll use to sign in to `/admin`           |
 | `ADMIN_JWT_SECRET` | A long random string (used to sign login sessions)       |
+| `ANTHROPIC_API_KEY`| Your Anthropic API key — powers the Application AI tab   |
+| `ANTHROPIC_MODEL`  | *(optional)* Overrides the model. Defaults to `claude-opus-4-8`. Set to `claude-haiku-4-5` or `claude-sonnet-5` for faster/cheaper generation if you hit the function timeout. |
 
 Generate a good secret with:
 
@@ -43,6 +45,26 @@ card emoji, description, tech stack, key features, challenge & solution,
 GitHub + live URLs, and up to 6 images (auto-compressed in the browser before
 upload, so the stored data stays small).
 
+### Application AI (motivation letter + resume)
+
+The **Application AI** tab turns a job posting into a tailored motivation
+letter and resume, drawn from your CV:
+
+1. Paste the job description, optionally add the company and role.
+2. Pick a tone and language (English or German) and what to produce.
+3. Click **Generate** — it returns a classic, print-ready A4 cover letter and
+   a tailored resume in a live preview.
+4. **Download / Print PDF** → choose “Save as PDF” in the print dialog.
+
+Your CV data lives server-side in `netlify/functions/generate.mjs`
+(`DEFAULT_PROFILE`). The AI only uses facts from that profile — it never
+invents employers, dates, or metrics. The `ANTHROPIC_API_KEY` stays on the
+server; it is never exposed to the browser.
+
+> **Timeout note:** Netlify's free-tier functions cap at ~10s. If Opus
+> generations time out, set `ANTHROPIC_MODEL=claude-haiku-4-5` (fast + cheap)
+> or `claude-sonnet-5` in your environment variables.
+
 ## Local development
 
 ```bash
@@ -69,12 +91,15 @@ Admin panel (/admin)      ──POST /api/auth──────▶  auth fn  (i
 
 - `netlify/functions/auth.mjs` — password login, issues an HMAC-signed token
 - `netlify/functions/projects.mjs` — public GET; token-gated create/update/delete
+- `netlify/functions/generate.mjs` — token-gated; calls the Anthropic API to
+  write the tailored letter + resume (key stays server-side)
 - `src/admin/` — the admin React app (separate bundle, never shipped to visitors)
 - `useProjects()` in `src/portfolio.jsx` — fetches and merges dynamic projects
 
-## What's next (planned)
+## Editing your CV profile
 
-The AI application assistant (paste a job description → tailored motivation
-letter + resume) will live inside this same admin panel, using an
-`ANTHROPIC_API_KEY` environment variable and a new serverless function so the
-API key never touches the browser.
+The AI generator's source of truth is `DEFAULT_PROFILE` in
+`netlify/functions/generate.mjs`. Edit that object to keep your experience,
+skills, and education current, then redeploy. (A future update can add an
+in-app profile editor backed by the `portfolio-profile` blob store — the
+function already reads an override from there if present.)

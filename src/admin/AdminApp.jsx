@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ApplicationAI from "./ApplicationAI.jsx";
 
 /* ════════════════════════════════════════════════════════════════
    CONFIG
@@ -604,6 +605,7 @@ export default function AdminApp() {
   const [editing, setEditing] = useState(null); // null | {} (new) | project
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
+  const [tab, setTab] = useState("projects"); // "projects" | "applications"
 
   // Inject fonts + reset once
   useEffect(() => {
@@ -707,7 +709,42 @@ export default function AdminApp() {
         </div>
       </div>
 
-      {editing !== null ? (
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 22, borderBottom: `1px solid ${C.border}` }}>
+        {[
+          ["projects", "Projects"],
+          ["applications", "Application AI"],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            style={{
+              background: "none",
+              border: "none",
+              borderBottom: `2px solid ${tab === id ? C.cyan : "transparent"}`,
+              color: tab === id ? "#fff" : C.dim,
+              fontWeight: 700,
+              fontSize: 14,
+              padding: "10px 14px",
+              cursor: "pointer",
+              fontFamily: "'Outfit',sans-serif",
+              marginBottom: -1,
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "applications" ? (
+        <ApplicationAI
+          token={token}
+          onSessionExpired={() => {
+            flash("Session expired — please sign in again");
+            logout();
+          }}
+        />
+      ) : editing !== null ? (
         <div
           style={{
             background: C.panel,
