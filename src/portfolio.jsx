@@ -147,6 +147,25 @@ function useWindowWidth(){
   useEffect(()=>{const h=()=>setW(window.innerWidth);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);
   return w;
 }
+/* Projects added through the /admin panel. Falls back silently to the
+   built-in `games` list when the backend isn't reachable (e.g. local `vite`
+   dev without functions). Normalises `images` to the ()=>[...] contract the
+   cards/modal expect. */
+function useProjects(){
+  const [items,setItems]=useState([]);
+  useEffect(()=>{
+    let alive=true;
+    fetch("/api/projects")
+      .then(r=>r.ok?r.json():[])
+      .then(list=>{
+        if(!alive||!Array.isArray(list))return;
+        setItems(list.map(p=>({...p,images:()=>Array.isArray(p.images)?p.images:[]})));
+      })
+      .catch(()=>{});
+    return()=>{alive=false;};
+  },[]);
+  return items;
+}
 
 /* ════════════════════════════════════════════════════════════════
    CURSOR
@@ -326,6 +345,9 @@ function ProjectModal({project,onClose}){
             {project.github&&<a href={project.github} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 22px",borderRadius:99,border:`1px solid ${project.color}44`,background:project.color+"12",color:project.color,fontWeight:600,fontSize:13,transition:"all .2s"}}
               onMouseEnter={e=>{e.currentTarget.style.background=project.color+"26";e.currentTarget.style.boxShadow=`0 0 20px ${project.color}33`;}}
               onMouseLeave={e=>{e.currentTarget.style.background=project.color+"12";e.currentTarget.style.boxShadow="none";}}>⌥ View on GitHub</a>}
+            {project.liveUrl&&<a href={project.liveUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 22px",borderRadius:99,border:`1px solid ${project.color}44`,background:project.color+"12",color:project.color,fontWeight:600,fontSize:13,transition:"all .2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.background=project.color+"26";e.currentTarget.style.boxShadow=`0 0 20px ${project.color}33`;}}
+              onMouseLeave={e=>{e.currentTarget.style.background=project.color+"12";e.currentTarget.style.boxShadow="none";}}>↗ Live Demo</a>}
             <button onClick={handleClose} style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:7,padding:"10px 20px",borderRadius:99,border:"1px solid rgba(255,255,255,.1)",background:"rgba(255,255,255,.04)",color:"rgba(255,255,255,.45)",fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"'Outfit',sans-serif",transition:"all .2s"}}
               onMouseEnter={e=>{e.currentTarget.style.color="#fff";e.currentTarget.style.background="rgba(255,255,255,.1)";}}
               onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.45)";e.currentTarget.style.background="rgba(255,255,255,.04)";}}>Close ✕</button>
@@ -359,7 +381,7 @@ function GameCard({game,index,onOpen}){
             <div style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:17,marginBottom:2}}>{game.title}</div>
             <div style={{color:game.color,fontSize:11,fontWeight:600}}>{game.tech} · {game.year}</div>
           </div>
-          <div style={{width:36,height:36,borderRadius:10,background:game.color+"18",border:`1px solid ${game.color}${hov?"55":"33"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0,transform:hov?"rotate(-6deg) scale(1.1)":"none",transition:"all .3s"}}>🎮</div>
+          <div style={{width:36,height:36,borderRadius:10,background:game.color+"18",border:`1px solid ${game.color}${hov?"55":"33"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0,transform:hov?"rotate(-6deg) scale(1.1)":"none",transition:"all .3s"}}>{game.emoji||"🎮"}</div>
         </div>
         <p style={{color:"rgba(255,255,255,.48)",fontSize:13,lineHeight:1.65,marginBottom:14}}>{game.desc}</p>
         <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
@@ -474,7 +496,7 @@ function NavBar({scrollPct,isMobile}){
   const [atTop,setAtTop]=useState(true);
   const [menuOpen,setMenuOpen]=useState(false);
   useEffect(()=>{const h=()=>setAtTop(window.scrollY<40);window.addEventListener("scroll",h,{passive:true});return()=>window.removeEventListener("scroll",h);},[]);
-  const links=["About","Services","Skills","Experience","Games","Contact","CV"];
+  const links=["About","Services","Skills","Experience","Projects","Contact","CV"];
   return(
     <header style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:atTop?"transparent":"rgba(5,5,10,.88)",borderBottom:atTop?"none":"1px solid rgba(255,255,255,.07)",backdropFilter:atTop?"none":"blur(20px)",transition:"background .3s,border .3s,backdrop-filter .3s"}}>
       <div style={{position:"absolute",top:0,left:0,height:2,width:`${scrollPct*100}%`,background:"linear-gradient(90deg,#22d3ee,#c084fc)",boxShadow:"0 0 8px rgba(34,211,238,.6)"}}/>
@@ -503,6 +525,9 @@ export default function App(){
   const winW=useWindowWidth();
   const isMobile=winW<768;
   const isTablet=winW>=768&&winW<1024;
+  const extraProjects=useProjects();
+  // Admin-managed projects lead, the built-in game showcase follows.
+  const allProjects=[...extraProjects,...games];
 
   useEffect(()=>{
     // AT Favicon
@@ -688,11 +713,11 @@ export default function App(){
 
         <SectionDivider/>
 
-        {/* GAMES */}
-        <section id="games" style={{paddingTop:isMobile?60:100}}>
-          <SectionHeading tag="Unity · C# · AR/VR" title="Game Projects" icon={Gamepad2} iconColor="#a78bfa"/>
+        {/* PROJECTS */}
+        <section id="projects" style={{paddingTop:isMobile?60:100}}>
+          <SectionHeading tag="Games · Web · Design" title="Projects" icon={Gamepad2} iconColor="#a78bfa"/>
           <div className="three-col">
-            {games.map((g,i)=><GameCard key={g.title} game={g} index={i} onOpen={setActiveProject}/>)}
+            {allProjects.map((g,i)=><GameCard key={g.id||g.title} game={g} index={i} onOpen={setActiveProject}/>)}
           </div>
         </section>
 
