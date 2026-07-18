@@ -45,6 +45,15 @@ card emoji, description, tech stack, key features, challenge & solution,
 GitHub + live URLs, and up to 6 images (auto-compressed in the browser before
 upload, so the stored data stays small).
 
+**Video** — paste a YouTube or Vimeo link in the *Video URL* field; it embeds
+a player in the project modal. (Don't upload video files — link them instead,
+so nothing hits your storage/credits.)
+
+**Playable builds** — export your Unity game to WebGL, host it on **itch.io**
+(free, purpose-built for browser games), and paste the link in the *Play URL*
+field. It adds a glowing **▶ Play Now** button to the modal, and a
+**▶ PLAYABLE** badge on the project's panel in the 3D gallery.
+
 ### Application AI (motivation letter + resume)
 
 The **Application AI** tab turns a job posting into a tailored motivation

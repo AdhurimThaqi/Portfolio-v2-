@@ -290,6 +290,26 @@ function SectionDivider(){
 /* ════════════════════════════════════════════════════════════════
    PROJECT MODAL
 ════════════════════════════════════════════════════════════════ */
+// Convert a YouTube / Vimeo watch URL into an embeddable player URL.
+function toEmbed(url){
+  if(!url) return null;
+  try{
+    const u=new URL(url);
+    const host=u.hostname.replace(/^www\./,"");
+    if(host==="youtu.be") return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+    if(host.endsWith("youtube.com")){
+      if(u.pathname.startsWith("/embed/")) return url;
+      const v=u.searchParams.get("v");
+      if(v) return `https://www.youtube.com/embed/${v}`;
+    }
+    if(host.endsWith("vimeo.com")){
+      const id=u.pathname.split("/").filter(Boolean)[0];
+      if(id&&/^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
+    }
+  }catch{/* not a valid URL */}
+  return null;
+}
+
 function ProjectModal({project,onClose}){
   const [visible,setVisible]=useState(false);
   const images=project.images();
@@ -323,6 +343,14 @@ function ProjectModal({project,onClose}){
             </div>
           </div>
           <p style={{color:"rgba(255,255,255,.6)",fontSize:15,lineHeight:1.75,marginBottom:22}}>{project.desc}</p>
+          {toEmbed(project.videoUrl)&&(
+            <div style={{marginBottom:22}}>
+              <div style={{fontSize:10,color:"rgba(255,255,255,.3)",letterSpacing:2,textTransform:"uppercase",fontWeight:700,marginBottom:10}}>Gameplay</div>
+              <div style={{position:"relative",width:"100%",aspectRatio:"16/9",borderRadius:14,overflow:"hidden",border:`1px solid ${project.color}30`,background:"#000"}}>
+                <iframe src={toEmbed(project.videoUrl)} title={`${project.title} video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{position:"absolute",inset:0,width:"100%",height:"100%",border:"none"}}/>
+              </div>
+            </div>
+          )}
           <div style={{marginBottom:22}}>
             <div style={{fontSize:10,color:"rgba(255,255,255,.3)",letterSpacing:2,textTransform:"uppercase",fontWeight:700,marginBottom:10}}>Tech Stack</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
@@ -345,6 +373,9 @@ function ProjectModal({project,onClose}){
             </div>
           </div>
           <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
+            {project.playUrl&&<a href={project.playUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 24px",borderRadius:99,border:"none",background:`linear-gradient(135deg,${project.color},${project.color}bb)`,color:"#04121a",fontWeight:800,fontSize:13,boxShadow:`0 6px 24px ${project.color}44`,transition:"all .2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 10px 32px ${project.color}66`;}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow=`0 6px 24px ${project.color}44`;}}>▶ Play Now</a>}
             {project.github&&<a href={project.github} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 22px",borderRadius:99,border:`1px solid ${project.color}44`,background:project.color+"12",color:project.color,fontWeight:600,fontSize:13,transition:"all .2s"}}
               onMouseEnter={e=>{e.currentTarget.style.background=project.color+"26";e.currentTarget.style.boxShadow=`0 0 20px ${project.color}33`;}}
               onMouseLeave={e=>{e.currentTarget.style.background=project.color+"12";e.currentTarget.style.boxShadow="none";}}>⌥ View on GitHub</a>}
