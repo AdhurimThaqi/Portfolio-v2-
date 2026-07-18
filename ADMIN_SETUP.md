@@ -13,8 +13,25 @@ Go to **Netlify → Site configuration → Environment variables** and add:
 | ------------------ | -------------------------------------------------------- |
 | `ADMIN_PASSWORD`   | The password you'll use to sign in to `/admin`           |
 | `ADMIN_JWT_SECRET` | A long random string (used to sign login sessions)       |
-| `ANTHROPIC_API_KEY`| Your Anthropic API key — powers the Application AI tab   |
+| `ANTHROPIC_API_KEY`| Your Anthropic API key — powers the Application AI tab (default provider) |
 | `ANTHROPIC_MODEL`  | *(optional)* Overrides the model. Defaults to `claude-opus-4-8`. Set to `claude-haiku-4-5` or `claude-sonnet-5` for faster/cheaper generation if you hit the function timeout. |
+
+### Using a free / different AI provider (Hugging Face, Groq, Together, …)
+
+The generator is provider-agnostic. To use any **OpenAI-compatible** endpoint
+instead of Anthropic (e.g. Hugging Face's free tier), set:
+
+| Key | Value |
+| --- | --- |
+| `AI_PROVIDER` | `openai` |
+| `AI_API_KEY`  | your provider key (e.g. `hf_…`) |
+| `AI_BASE_URL` | e.g. `https://router.huggingface.co/v1` |
+| `AI_MODEL`    | e.g. `meta-llama/Llama-3.3-70B-Instruct` |
+
+Leave `AI_PROVIDER` unset (or `anthropic`) to use Claude via `ANTHROPIC_API_KEY`.
+Switching providers is env-vars only — no code change. Open models are a bit
+less reliable at strict JSON, so the function automatically retries once with a
+stricter instruction, and may be slower on a cold start (first request).
 
 Generate a good secret with:
 
@@ -44,6 +61,15 @@ Each project supports: title, tech line, category badge, year, accent colour,
 card emoji, description, tech stack, key features, challenge & solution,
 GitHub + live URLs, and up to 6 images (auto-compressed in the browser before
 upload, so the stored data stays small).
+
+**Video** — paste a YouTube or Vimeo link in the *Video URL* field; it embeds
+a player in the project modal. (Don't upload video files — link them instead,
+so nothing hits your storage/credits.)
+
+**Playable builds** — export your Unity game to WebGL, host it on **itch.io**
+(free, purpose-built for browser games), and paste the link in the *Play URL*
+field. It adds a glowing **▶ Play Now** button to the modal, and a
+**▶ PLAYABLE** badge on the project's panel in the 3D gallery.
 
 ### Application AI (motivation letter + resume)
 

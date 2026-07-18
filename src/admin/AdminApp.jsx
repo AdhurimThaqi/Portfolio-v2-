@@ -26,6 +26,8 @@ const EMPTY = {
   challenge: "",
   github: "",
   liveUrl: "",
+  videoUrl: "",
+  playUrl: "",
   stack: [],
   features: [],
   images: [],
@@ -372,6 +374,12 @@ function ProjectForm({ initial, onSave, onCancel, busy }) {
         </Field>
         <Field label="Live URL (optional)">
           <input style={inputStyle} value={p.liveUrl} onChange={set("liveUrl")} placeholder="https://…" />
+        </Field>
+        <Field label="Video URL (optional)" hint="YouTube or Vimeo link — embeds a gameplay trailer">
+          <input style={inputStyle} value={p.videoUrl} onChange={set("videoUrl")} placeholder="https://youtube.com/watch?v=…" />
+        </Field>
+        <Field label="Play URL (optional)" hint="Playable WebGL build, e.g. an itch.io link — adds a ▶ Play button">
+          <input style={inputStyle} value={p.playUrl} onChange={set("playUrl")} placeholder="https://itch.io/…" />
         </Field>
       </div>
 

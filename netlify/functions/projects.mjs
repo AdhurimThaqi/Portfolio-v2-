@@ -55,6 +55,8 @@ function normalise(input) {
     challenge: String(input.challenge || "").slice(0, 2000),
     github: String(input.github || "").slice(0, 500),
     liveUrl: String(input.liveUrl || "").slice(0, 500),
+    videoUrl: String(input.videoUrl || "").slice(0, 500),
+    playUrl: String(input.playUrl || "").slice(0, 500),
     stack: asArray(input.stack).map((s) => String(s).slice(0, 60)).slice(0, 20),
     features: asArray(input.features).map((s) => String(s).slice(0, 300)).slice(0, 20),
     images: asArray(input.images).map((s) => String(s)).slice(0, 6),

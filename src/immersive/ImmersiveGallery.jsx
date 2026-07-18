@@ -76,6 +76,16 @@ function Panel({ project, index, count, onOpen }) {
             <div style={{ color, fontSize: 12, fontWeight: 700, letterSpacing: 1, marginTop: 2 }}>
               {project.category || project.tech}
             </div>
+            {(project.playUrl || project.videoUrl) && (
+              <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: 6 }}>
+                {project.playUrl && (
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "#04121a", background: color, borderRadius: 6, padding: "2px 8px" }}>▶ PLAYABLE</span>
+                )}
+                {project.videoUrl && (
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "#fff", background: "rgba(0,0,0,.5)", border: `1px solid ${color}`, borderRadius: 6, padding: "2px 8px" }}>🎬 VIDEO</span>
+                )}
+              </div>
+            )}
           </div>
         </Html>
       </Billboard>
