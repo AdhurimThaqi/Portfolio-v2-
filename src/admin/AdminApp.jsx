@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ApplicationAI from "./ApplicationAI.jsx";
+import ProfileEditor from "./ProfileEditor.jsx";
 
 /* ════════════════════════════════════════════════════════════════
    CONFIG
@@ -714,6 +715,7 @@ export default function AdminApp() {
         {[
           ["projects", "Projects"],
           ["applications", "Application AI"],
+          ["profile", "My CV Profile"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -739,6 +741,15 @@ export default function AdminApp() {
       {tab === "applications" ? (
         <ApplicationAI
           token={token}
+          onSessionExpired={() => {
+            flash("Session expired — please sign in again");
+            logout();
+          }}
+        />
+      ) : tab === "profile" ? (
+        <ProfileEditor
+          token={token}
+          onToast={flash}
           onSessionExpired={() => {
             flash("Session expired — please sign in again");
             logout();

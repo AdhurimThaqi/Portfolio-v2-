@@ -98,8 +98,9 @@ Admin panel (/admin)      ──POST /api/auth──────▶  auth fn  (i
 
 ## Editing your CV profile
 
-The AI generator's source of truth is `DEFAULT_PROFILE` in
-`netlify/functions/generate.mjs`. Edit that object to keep your experience,
-skills, and education current, then redeploy. (A future update can add an
-in-app profile editor backed by the `portfolio-profile` blob store — the
-function already reads an override from there if present.)
+Open the **My CV Profile** tab in `/admin` to edit your basics, summary,
+experience, skills, education, games, and languages — no code needed. Saving
+stores an override in the `portfolio-profile` blob store, and the Application
+AI immediately uses it. (The built-in starting point lives in
+`netlify/functions/lib/cv.mjs` as `DEFAULT_PROFILE`, used until you save an
+edit.)
