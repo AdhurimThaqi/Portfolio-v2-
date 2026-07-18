@@ -33,6 +33,78 @@ function requireAuth(req) {
   return !!verify(token, secret);
 }
 
+/* ── provider config ──────────────────────────────────────────────
+   Default: Anthropic (ANTHROPIC_API_KEY / ANTHROPIC_MODEL).
+   Set AI_PROVIDER=openai to use ANY OpenAI-compatible chat endpoint —
+   Hugging Face, Groq, Together, OpenRouter, OpenAI, etc.:
+     AI_PROVIDER = openai
+     AI_API_KEY  = hf_... (or the provider's key)
+     AI_BASE_URL = https://router.huggingface.co/v1
+     AI_MODEL    = meta-llama/Llama-3.3-70B-Instruct
+*/
+function providerConfig() {
+  const provider = (process.env.AI_PROVIDER || "anthropic").toLowerCase();
+  if (provider === "openai" || provider === "openai-compatible") {
+    return {
+      provider: "openai",
+      apiKey: process.env.AI_API_KEY,
+      baseUrl: (process.env.AI_BASE_URL || "https://router.huggingface.co/v1").replace(/\/+$/, ""),
+      model: process.env.AI_MODEL || "meta-llama/Llama-3.3-70B-Instruct",
+    };
+  }
+  return {
+    provider: "anthropic",
+    apiKey: process.env.ANTHROPIC_API_KEY || process.env.AI_API_KEY,
+    model: process.env.ANTHROPIC_MODEL || process.env.AI_MODEL || "claude-opus-4-8",
+  };
+}
+
+/* Calls the model and returns the raw text. Throws { status, detail } on a
+   non-2xx response; propagates AbortError on timeout. */
+async function callModel(cfg, system, user, signal) {
+  if (cfg.provider === "anthropic") {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      signal,
+      headers: {
+        "x-api-key": cfg.apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: cfg.model,
+        max_tokens: 6000,
+        system,
+        messages: [{ role: "user", content: user }],
+      }),
+    });
+    if (!resp.ok) throw { status: resp.status, detail: await resp.text().catch(() => "") };
+    const data = await resp.json();
+    return (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  }
+
+  // OpenAI-compatible chat completions (HF / Groq / Together / OpenRouter / OpenAI)
+  const resp = await fetch(`${cfg.baseUrl}/chat/completions`, {
+    method: "POST",
+    signal,
+    headers: {
+      authorization: `Bearer ${cfg.apiKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: cfg.model,
+      max_tokens: 6000,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+    }),
+  });
+  if (!resp.ok) throw { status: resp.status, detail: await resp.text().catch(() => "") };
+  const data = await resp.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+
 /* ── prompt construction ──────────────────────────────────────── */
 function buildMessages({ profile, jobDescription, company, role, tone, language, outputs }) {
   const want = [];
@@ -89,11 +161,15 @@ function buildMessages({ profile, jobDescription, company, role, tone, language,
   return { system, user };
 }
 
-function extractJSON(text) {
+function tryParseJSON(text) {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("Model did not return JSON");
-  return JSON.parse(text.slice(start, end + 1));
+  if (start === -1 || end === -1) return null;
+  try {
+    return JSON.parse(text.slice(start, end + 1));
+  } catch {
+    return null;
+  }
 }
 
 /* ── /api/generate ────────────────────────────────────────────── */
@@ -101,10 +177,13 @@ export default async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!requireAuth(req)) return json({ error: "Unauthorized" }, 401);
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
+  const cfg = providerConfig();
+  if (!cfg.apiKey) {
     return json(
-      { error: "AI is not configured. Set ANTHROPIC_API_KEY in your Netlify environment variables." },
+      {
+        error:
+          "AI is not configured. Set ANTHROPIC_API_KEY (default), or AI_PROVIDER=openai with AI_API_KEY / AI_BASE_URL / AI_MODEL for a free provider like Hugging Face.",
+      },
       503,
     );
   }
@@ -118,68 +197,54 @@ export default async (req) => {
 
   const profile = await loadProfile();
   const { system, user } = buildMessages({ ...body, profile });
-  const model = process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
 
-  // Guard against the serverless wall-clock limit.
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 24000);
 
-  let resp;
   try {
-    resp = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 6000,
+    let text = await callModel(cfg, system, user, controller.signal);
+    let result = tryParseJSON(text);
+    if (!result) {
+      // Open models are less disciplined at strict JSON — one stricter retry.
+      text = await callModel(
+        cfg,
         system,
-        messages: [{ role: "user", content: user }],
-      }),
+        `${user}\n\nIMPORTANT: Output ONLY the raw JSON object — no prose, no markdown, no code fences.`,
+        controller.signal,
+      );
+      result = tryParseJSON(text);
+    }
+    clearTimeout(timer);
+
+    if (!result) {
+      return json({ error: "The AI returned an unexpected format. Please try again." }, 502);
+    }
+
+    return json({
+      result,
+      profile: {
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        location: profile.location,
+        website: profile.website,
+        title: profile.title,
+      },
     });
   } catch (e) {
     clearTimeout(timer);
-    if (e.name === "AbortError") {
+    if (e?.name === "AbortError") {
       return json(
-        { error: "Generation timed out. Try a faster model by setting ANTHROPIC_MODEL=claude-haiku-4-5 (or claude-sonnet-5)." },
+        {
+          error:
+            "Generation timed out (the model may be waking up). Try again, or use a faster model — e.g. AI_MODEL to a smaller HF model, or ANTHROPIC_MODEL=claude-haiku-4-5.",
+        },
         504,
       );
     }
+    if (e?.status) {
+      return json({ error: `AI request failed (${e.status}).`, detail: String(e.detail || "").slice(0, 400) }, 502);
+    }
     return json({ error: "Could not reach the AI service." }, 502);
   }
-  clearTimeout(timer);
-
-  if (!resp.ok) {
-    const detail = await resp.text().catch(() => "");
-    return json({ error: `AI request failed (${resp.status}).`, detail: detail.slice(0, 400) }, 502);
-  }
-
-  const data = await resp.json();
-  const text = (data.content || [])
-    .filter((b) => b.type === "text")
-    .map((b) => b.text)
-    .join("");
-
-  let result;
-  try {
-    result = extractJSON(text);
-  } catch {
-    return json({ error: "The AI returned an unexpected format. Please try again." }, 502);
-  }
-
-  return json({
-    result,
-    profile: {
-      name: profile.name,
-      email: profile.email,
-      phone: profile.phone,
-      location: profile.location,
-      website: profile.website,
-      title: profile.title,
-    },
-  });
 };
