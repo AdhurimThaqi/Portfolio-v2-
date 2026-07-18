@@ -209,7 +209,8 @@ function GridCanvas({mouse}){
           const e=Math.max(0,1-dist/R)**2;
           y===0?ctx.moveTo(mx+dx*(1-e*.55),my+dy*(1-e*.55)):ctx.lineTo(mx+dx*(1-e*.55),my+dy*(1-e*.55));
         }
-        const a=Math.max(.025,Math.min(.18,.025+(1-Math.min(Math.abs(x-mx),R)/R)*.155));
+        const a=Math.min(.18,(1-Math.min(Math.abs(x-mx),R)/R)*.2);
+        if(a<=0)continue;
         ctx.strokeStyle=`rgba(34,211,238,${a.toFixed(3)})`;ctx.lineWidth=.5;ctx.stroke();
       }
       for(let y=0;y<=canvas.height+G;y+=G){
@@ -219,7 +220,8 @@ function GridCanvas({mouse}){
           const e=Math.max(0,1-dist/R)**2;
           x===0?ctx.moveTo(mx+dx*(1-e*.55),my+dy*(1-e*.55)):ctx.lineTo(mx+dx*(1-e*.55),my+dy*(1-e*.55));
         }
-        const a=Math.max(.025,Math.min(.18,.025+(1-Math.min(Math.abs(y-my),R)/R)*.155));
+        const a=Math.min(.18,(1-Math.min(Math.abs(y-my),R)/R)*.2);
+        if(a<=0)continue;
         ctx.strokeStyle=`rgba(34,211,238,${a.toFixed(3)})`;ctx.lineWidth=.5;ctx.stroke();
       }
       animRef.current=requestAnimationFrame(draw);
@@ -560,8 +562,10 @@ export default function App(){
   const isMobile=winW<768;
   const isTablet=winW>=768&&winW<1024;
   const extraProjects=useProjects();
-  // Admin-managed projects lead, the built-in game showcase follows.
-  const allProjects=[...extraProjects,...games];
+  // CMS-first: once you add projects in /admin, only those show (fully
+  // editable & deletable). The built-in games are just a starter showcase
+  // shown until your first project exists.
+  const allProjects=extraProjects.length?extraProjects:games;
   const [immersive,setImmersive]=useState(false);
 
   useEffect(()=>{
