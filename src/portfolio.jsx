@@ -66,16 +66,50 @@ const languages = [
 ];
 
 const timeline = [
-  { role:"Software Engineer Project", company:"BSc Immersive Technologies · HSLU", period:"2025 – Present", color:"#a78bfa",
-    details:"Full-stack apps with Java (Spring Boot) & Node.js. Agile, Docker, CI/CD pipelines, AWS/Azure cloud." },
-  { role:"Freelance Developer & Designer", company:"Independent", period:"2023 – Present", color:"#22d3ee",
-    details:"React.js, Vue.js, WordPress, UI/UX in Figma/Adobe XD. Mobile via Flutter & React Native across 15+ projects." },
+  { role:"Software Engineer Project (Academic)", company:"BSc Immersive Technologies · HSLU", period:"2025 – Present", color:"#a78bfa",
+    details:"Full-stack apps with Java (Spring Boot) & Node.js. Agile, Docker, CI/CD pipelines, AWS/Azure cloud.",
+    bullets:[
+      "Architected full-stack applications with Java (Spring Boot) & Node.js in a cross-functional Agile team.",
+      "Implemented Docker containerization and CI/CD pipelines, reducing deployment time.",
+      "Deployed and maintained services on AWS & Azure cloud infrastructure.",
+      "Conducted code reviews, improving codebase quality and overall team velocity.",
+    ],
+    tech:["Java","Spring Boot","Node.js","Docker","CI/CD","AWS","Azure","Agile"] },
+  { role:"Freelance Developer & Designer", company:"Remote · Multiple International Clients", period:"2023 – Present", color:"#22d3ee",
+    details:"React.js, Vue.js, WordPress, UI/UX in Figma/Adobe XD. Mobile via Flutter & React Native across 15+ projects.",
+    bullets:[
+      "Engineered 15+ responsive web applications using React.js, Vue.js, and WordPress.",
+      "Designed pixel-perfect UI/UX prototypes in Figma and Adobe XD, reducing revision cycles by 30%.",
+      "Developed and shipped mobile applications using Flutter and React Native.",
+      "Implemented SEO best practices, consistently achieving Page 1 search rankings for all clients.",
+    ],
+    tech:["React.js","Vue.js","Flutter","React Native","Figma","Adobe XD","WordPress","SEO"] },
   { role:"Freelance Web Developer", company:"ASM Promissa GmbH · Switzerland", period:"2023 – Present", color:"#34d399",
-    details:"Designed & built a responsive modern site. Improved load speed 30%. Achieved top-3 SEO rankings." },
-  { role:"Graphic & Interior Designer", company:"OnaCandy & TelePerformance", period:"2023 – 2024", color:"#fb923c",
-    details:"Brand identities, 3D assets and visualisations using AutoCAD, Blender, 3ds Max. 100% customer satisfaction." },
-  { role:"Fitness Trainer & Content Creator", company:"Independent · YouTube", period:"2024 – Present", color:"#f472b6",
-    details:"Strength, kettlebell & fat-loss coaching. Growing a YouTube fitness brand through quality content." },
+    details:"Designed & built a responsive modern site. Improved load speed 30%. Achieved top-3 SEO rankings.",
+    bullets:[
+      "Designed and developed a fully responsive modern business website from scratch.",
+      "Improved page load speed by 30% through performance optimisation and asset compression.",
+      "Implemented targeted SEO strategies, achieving consistent top-3 search engine rankings.",
+      "Integrated contact forms, email automation, and secure user navigation flows.",
+    ],
+    tech:["HTML5","CSS3","JavaScript","WordPress","SEO","Performance Optimisation"] },
+  { role:"Graphic & Interior Designer / Customer Rep", company:"OnaCandy & TelePerformance · Kosovo", period:"2023 – 2024", color:"#fb923c",
+    details:"Brand identities, 3D assets and visualisations using AutoCAD, Blender, 3ds Max. 100% customer satisfaction.",
+    bullets:[
+      "Spearheaded brand identity design: logos, marketing collateral, and social media assets.",
+      "Developed 3D architectural visualisations and interior models using AutoCAD, Blender & 3ds Max.",
+      "Achieved 100% customer satisfaction rating as Customer Sales Representative.",
+      "Managed 5+ concurrent design and service projects simultaneously to tight deadlines.",
+    ],
+    tech:["AutoCAD","Blender","3ds Max","Branding","Interior Design","Customer Service"] },
+  { role:"Fitness Trainer & Content Creator", company:"Self-Employed · YouTube & Social Media", period:"2024 – Present", color:"#f472b6",
+    details:"Strength, kettlebell & fat-loss coaching. Growing a YouTube fitness brand through quality content.",
+    bullets:[
+      "Launched and grew a fitness brand across YouTube and Instagram with an engaged online community.",
+      "Produced and edited high-quality video content, applying digital marketing strategy to drive growth.",
+      "Coached clients on strength training, kettlebell programming, and personalised nutrition plans.",
+    ],
+    tech:["Content Creation","YouTube","Digital Marketing","Brand Building","Personal Training"] },
 ];
 
 const games = [
@@ -554,6 +588,57 @@ function NavBar({scrollPct,isMobile}){
    APP
 ════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════
+   EXPERIENCE MODAL
+════════════════════════════════════════════════════════════════ */
+function ExperienceModal({item,onClose}){
+  const [visible,setVisible]=useState(false);
+  useEffect(()=>{
+    const t=requestAnimationFrame(()=>setVisible(true));
+    const esc=(e)=>{if(e.key==="Escape")setVisible(false)||setTimeout(onClose,300);};
+    document.addEventListener("keydown",esc);
+    document.body.style.overflow="hidden";
+    return()=>{cancelAnimationFrame(t);document.removeEventListener("keydown",esc);document.body.style.overflow="";};
+  },[]);
+  const close=()=>{setVisible(false);setTimeout(onClose,300);};
+  return(
+    <div onClick={e=>e.target===e.currentTarget&&close()} style={{position:"fixed",inset:0,zIndex:1000,background:`rgba(5,5,10,${visible?.88:0})`,backdropFilter:visible?"blur(18px)":"none",display:"flex",alignItems:"center",justifyContent:"center",padding:"20px 16px",transition:"background .35s,backdrop-filter .35s"}}>
+      <div style={{width:"100%",maxWidth:620,maxHeight:"88vh",overflowY:"auto",borderRadius:24,background:"rgba(8,8,18,.98)",border:`1px solid ${item.color}44`,boxShadow:`0 0 100px ${item.color}1a,0 0 0 1px rgba(255,255,255,.05)`,opacity:visible?1:0,transform:visible?"scale(1) translateY(0)":"scale(.94) translateY(20px)",transition:"opacity .35s cubic-bezier(.4,0,.2,1),transform .35s cubic-bezier(.4,0,.2,1)",padding:"26px 28px 28px",scrollbarWidth:"thin"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:14,flexWrap:"wrap"}}>
+          <div style={{minWidth:0}}>
+            <h2 style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:22,color:"#fff"}}>{item.role}</h2>
+            <div style={{color:item.color,fontSize:14,fontWeight:600,marginTop:3}}>{item.company}</div>
+          </div>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <span style={{padding:"5px 13px",borderRadius:99,background:item.color+"18",border:`1px solid ${item.color}33`,color:item.color,fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}>{item.period}</span>
+            <button onClick={close} style={{width:34,height:34,borderRadius:10,border:"1px solid rgba(255,255,255,.15)",background:"rgba(255,255,255,.04)",color:"rgba(255,255,255,.7)",cursor:"pointer",fontSize:15,fontFamily:"'Outfit',sans-serif"}}>✕</button>
+          </div>
+        </div>
+        <p style={{color:"rgba(255,255,255,.6)",fontSize:14.5,lineHeight:1.7,marginBottom:20}}>{item.details}</p>
+        {item.bullets&&(
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:10,color:"rgba(255,255,255,.3)",letterSpacing:2,textTransform:"uppercase",fontWeight:700,marginBottom:12}}>What I did</div>
+            {item.bullets.map((b,i)=>(
+              <div key={i} style={{display:"flex",gap:11,alignItems:"flex-start",marginBottom:10}}>
+                <div style={{width:6,height:6,borderRadius:"50%",background:item.color,marginTop:6,flexShrink:0,boxShadow:`0 0 6px ${item.color}`}}/>
+                <span style={{color:"rgba(255,255,255,.66)",fontSize:13.5,lineHeight:1.6}}>{b}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {item.tech&&(
+          <div>
+            <div style={{fontSize:10,color:"rgba(255,255,255,.3)",letterSpacing:2,textTransform:"uppercase",fontWeight:700,marginBottom:10}}>Tools & Tech</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+              {item.tech.map(t=><span key={t} style={{padding:"5px 13px",borderRadius:99,background:item.color+"14",border:`1px solid ${item.color}30`,color:item.color,fontSize:12,fontWeight:600}}>{t}</span>)}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
    AI ASSISTANT — a talking guide grounded in the CV + projects
 ════════════════════════════════════════════════════════════════ */
 function AiAssistant(){
@@ -643,6 +728,7 @@ export default function App(){
   const [mouse,setMouse]=useState({x:-200,y:-200});
   const [loaded,setLoaded]=useState(false);
   const [activeProject,setActiveProject]=useState(null);
+  const [activeExp,setActiveExp]=useState(null);
   const scrollPct=useScrollPct();
   const winW=useWindowWidth();
   const isMobile=winW<768;
@@ -693,6 +779,7 @@ export default function App(){
     <div style={{background:"#05050a",minHeight:"100vh",overflowX:"hidden"}}>
       {!isMobile&&<Cursor pos={mouse}/>}
       {activeProject&&<ProjectModal project={activeProject} onClose={()=>setActiveProject(null)}/>}
+      {activeExp&&<ExperienceModal item={activeExp} onClose={()=>setActiveExp(null)}/>}
       {immersive&&<Suspense fallback={<div style={{position:"fixed",inset:0,zIndex:2000,background:"#05050a",display:"flex",alignItems:"center",justifyContent:"center",color:"#22d3ee",fontFamily:"'Syne',sans-serif",letterSpacing:6,fontSize:14}}>LOADING…</div>}><ImmersiveGallery projects={gamesVr} onExit={()=>setImmersive(false)} onOpen={setActiveProject}/></Suspense>}
       <AiAssistant/>
       <GridCanvas mouse={mouse}/>
@@ -834,9 +921,10 @@ export default function App(){
             <div style={{display:"flex",flexDirection:"column",gap:18}}>
               {timeline.map((item,i)=>(
                 <FadeIn key={item.role} delay={i*.09} dir="right">
-                  <div style={{position:"relative"}}>
+                  <div style={{position:"relative"}} onClick={()=>setActiveExp(item)} role="button" tabIndex={0}
+                    onKeyDown={e=>{if(e.key==="Enter")setActiveExp(item);}}>
                     <div style={{position:"absolute",left:isMobile?-16:-24,top:20,width:12,height:12,borderRadius:"50%",background:item.color,border:"3px solid #05050a",boxShadow:`0 0 12px ${item.color}88`}}/>
-                    <Glass hover style={{padding:isMobile?16:22}}>
+                    <Glass hover style={{padding:isMobile?16:22,cursor:"pointer"}}>
                       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:8,marginBottom:6}}>
                         <div>
                           <div style={{fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:isMobile?14:16}}>{item.role}</div>
@@ -845,6 +933,7 @@ export default function App(){
                         <span style={{padding:"3px 10px",borderRadius:99,background:item.color+"18",border:`1px solid ${item.color}33`,color:item.color,fontSize:11,fontWeight:700,whiteSpace:"nowrap"}}>{item.period}</span>
                       </div>
                       <p style={{color:"rgba(255,255,255,.5)",fontSize:13.5,lineHeight:1.65}}>{item.details}</p>
+                      <div style={{color:item.color,fontSize:12,fontWeight:600,marginTop:10,opacity:.85}}>View details →</div>
                     </Glass>
                   </div>
                 </FadeIn>
