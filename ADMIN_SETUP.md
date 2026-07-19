@@ -33,6 +33,15 @@ Switching providers is env-vars only — no code change. Open models are a bit
 less reliable at strict JSON, so the function automatically retries once with a
 stricter instruction, and may be slower on a cold start (first request).
 
+### Public AI assistant (the talking avatar widget)
+
+The floating assistant on the public site (`/api/assistant`) uses the **same**
+AI key as above — no extra setup. It answers visitors' questions grounded in
+your CV + projects, refuses off-topic/impersonation, and speaks via the
+browser's built-in text-to-speech. Without a key it shows a friendly "AI isn't
+switched on yet" message (never breaks). It's rate-limited per visitor IP;
+tune with `ASSISTANT_RATE_LIMIT` (default 25 questions/hour).
+
 Generate a good secret with:
 
 ```bash
