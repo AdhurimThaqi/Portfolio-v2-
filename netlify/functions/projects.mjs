@@ -47,6 +47,7 @@ function normalise(input) {
     id: input.id || randomUUID(),
     title: String(input.title || "Untitled").slice(0, 120),
     tech: String(input.tech || "").slice(0, 120),
+    type: ["game", "web", "design"].includes(input.type) ? input.type : "web",
     category: String(input.category || "Project").slice(0, 60),
     year: String(input.year || new Date().getFullYear()).slice(0, 20),
     color: /^#[0-9a-fA-F]{3,8}$/.test(input.color || "") ? input.color : "#22d3ee",

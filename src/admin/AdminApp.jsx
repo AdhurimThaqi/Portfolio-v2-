@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ApplicationAI from "./ApplicationAI.jsx";
 import ProfileEditor from "./ProfileEditor.jsx";
+import CvBuilder from "./CvBuilder.jsx";
 
 /* ════════════════════════════════════════════════════════════════
    CONFIG
@@ -18,6 +19,7 @@ const EMPTY = {
   id: "",
   title: "",
   tech: "",
+  type: "web",
   category: "",
   year: String(new Date().getFullYear()),
   color: "#22d3ee",
@@ -351,8 +353,15 @@ function ProjectForm({ initial, onSave, onCancel, busy }) {
         <Field label="Tech line" hint="Shown under the title">
           <input style={inputStyle} value={p.tech} onChange={set("tech")} placeholder="Unity · C#" />
         </Field>
+        <Field label="Section" hint="Which part of the site this shows in">
+          <select style={inputStyle} value={p.type} onChange={set("type")}>
+            <option value="game" style={{ background: "#0b0b14" }}>Games & VR</option>
+            <option value="web" style={{ background: "#0b0b14" }}>Web / Development</option>
+            <option value="design" style={{ background: "#0b0b14" }}>Design / Branding</option>
+          </select>
+        </Field>
         <Field label="Category / badge">
-          <input style={inputStyle} value={p.category} onChange={set("category")} placeholder="3D Adventure · Web App · Design" />
+          <input style={inputStyle} value={p.category} onChange={set("category")} placeholder="3D Adventure · Web App · Business Card" />
         </Field>
         <Field label="Year">
           <input style={inputStyle} value={p.year} onChange={set("year")} placeholder="2025" />
@@ -724,6 +733,7 @@ export default function AdminApp() {
           ["projects", "Projects"],
           ["applications", "Application AI"],
           ["profile", "My CV Profile"],
+          ["cv", "CV Builder"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -756,6 +766,15 @@ export default function AdminApp() {
         />
       ) : tab === "profile" ? (
         <ProfileEditor
+          token={token}
+          onToast={flash}
+          onSessionExpired={() => {
+            flash("Session expired — please sign in again");
+            logout();
+          }}
+        />
+      ) : tab === "cv" ? (
+        <CvBuilder
           token={token}
           onToast={flash}
           onSessionExpired={() => {

@@ -1,7 +1,60 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Billboard, Html, Stars, useTexture } from "@react-three/drei";
+import { OrbitControls, Billboard, Html, Stars, useTexture, useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
+
+useGLTF.preload("/host.glb");
+
+/* ── the 3D host — greets visitors, waves, then idles ─────────── */
+function Host() {
+  const group = useRef();
+  const { scene, animations } = useGLTF("/host.glb");
+  const { actions, mixer } = useAnimations(animations, group);
+  useEffect(() => {
+    const idle = actions.Idle;
+    const wave = actions.Wave;
+    if (wave) {
+      wave.reset().setLoop(THREE.LoopOnce, 1).fadeIn(0.2).play();
+      wave.clampWhenFinished = true;
+      const onFin = () => {
+        wave.fadeOut(0.5);
+        idle && idle.reset().fadeIn(0.5).play();
+        mixer.removeEventListener("finished", onFin);
+      };
+      mixer.addEventListener("finished", onFin);
+      return () => mixer.removeEventListener("finished", onFin);
+    }
+    if (idle) idle.reset().play();
+  }, [actions, mixer]);
+
+  return (
+    <group ref={group} position={[0, -3.2, 1.8]} scale={0.72} dispose={null}>
+      <primitive object={scene} />
+      <Html position={[0, 7.4, 0]} center distanceFactor={10} pointerEvents="none">
+        <div
+          style={{
+            width: 210,
+            textAlign: "center",
+            background: "rgba(8,8,18,.92)",
+            border: "1px solid rgba(34,211,238,.4)",
+            borderRadius: 14,
+            padding: "10px 14px",
+            color: "#fff",
+            fontFamily: "'Outfit',sans-serif",
+            fontSize: 13,
+            lineHeight: 1.45,
+            boxShadow: "0 6px 24px rgba(0,0,0,.5)",
+            userSelect: "none",
+          }}
+        >
+          <b style={{ fontFamily: "'Syne',sans-serif" }}>Hi, I&apos;m Adhurim</b> 👋
+          <br />
+          Welcome to my projects — tap any to explore.
+        </div>
+      </Html>
+    </group>
+  );
+}
 
 // 1x1 transparent pixel — keeps useTexture happy for projects without a cover.
 const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
@@ -16,8 +69,9 @@ function Panel({ project, index, count, onOpen }) {
     if (tex) tex.colorSpace = THREE.SRGBColorSpace;
   });
 
-  const angle = (index / count) * Math.PI * 2;
-  const radius = Math.max(4.2, count * 0.75);
+  // +0.5 offset keeps the front-centre clear for the host
+  const angle = ((index + 0.5) / count) * Math.PI * 2;
+  const radius = Math.max(4.6, count * 0.8);
   const base = [Math.sin(angle) * radius, Math.sin(index * 1.7) * 0.5, Math.cos(angle) * radius];
   const color = project.color || "#22d3ee";
 
@@ -113,6 +167,11 @@ function Scene({ projects, onOpen }) {
       {/* subtle reflective floor grid */}
       <gridHelper args={[60, 60, "#123", "#0c0c18"]} position={[0, -3.2, 0]} />
 
+      {/* 3D host — greets visitors */}
+      <Suspense fallback={null}>
+        <Host />
+      </Suspense>
+
       {projects.map((p, i) => (
         <Suspense key={p.id || p.title} fallback={<PanelFallback />}>
           <Panel project={p} index={i} count={count} onOpen={onOpen} />
@@ -121,6 +180,7 @@ function Scene({ projects, onOpen }) {
 
       <OrbitControls
         makeDefault
+        target={[0, -0.9, 0]}
         enablePan={false}
         enableZoom
         autoRotate
@@ -155,13 +215,26 @@ export default function ImmersiveGallery({ projects = [], onExit, onOpen }) {
       return;
     }
     document.body.style.overflow = "hidden";
-    const t1 = setTimeout(() => setPhase("live"), 1700);
+    const t1 = setTimeout(() => {
+      setPhase("live");
+      // spoken greeting (entering via a click satisfies autoplay policy)
+      try {
+        const u = new SpeechSynthesisUtterance(
+          "Hi, I'm Adhurim. Welcome to my projects. Drag to look around, and tap any project to explore it.",
+        );
+        u.rate = 1.03;
+        window.speechSynthesis && window.speechSynthesis.speak(u);
+      } catch {
+        /* no tts */
+      }
+    }, 1700);
     const esc = (e) => e.key === "Escape" && onExit?.();
     window.addEventListener("keydown", esc);
     return () => {
       document.body.style.overflow = "";
       clearTimeout(t1);
       window.removeEventListener("keydown", esc);
+      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch { /* no tts */ }
     };
   }, []);
 

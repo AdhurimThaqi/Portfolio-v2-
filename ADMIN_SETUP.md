@@ -131,6 +131,14 @@ Admin panel (/admin)      ──POST /api/auth──────▶  auth fn  (i
 - `src/admin/` — the admin React app (separate bundle, never shipped to visitors)
 - `useProjects()` in `src/portfolio.jsx` — fetches and merges dynamic projects
 
+## CV Builder (generate your CV PDF from the profile)
+
+The **CV Builder** tab renders a clean, classic, ATS-friendly CV **from your
+profile data** — edit the profile and the CV updates automatically. Export it
+with **Download / Print PDF**, and use **✨ Improve summary with AI** to have
+the model sharpen your profile summary (`/api/polish`, uses the same AI key;
+never invents facts). No more maintaining a separate PDF by hand.
+
 ## Editing your CV profile
 
 Open the **My CV Profile** tab in `/admin` to edit your basics, summary,
