@@ -417,7 +417,7 @@ function GameCard({game,index,onOpen}){
             <div style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:17,marginBottom:2}}>{game.title}</div>
             <div style={{color:game.color,fontSize:11,fontWeight:600}}>{game.tech} · {game.year}</div>
           </div>
-          <div style={{width:36,height:36,borderRadius:10,background:game.color+"18",border:`1px solid ${game.color}${hov?"55":"33"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0,transform:hov?"rotate(-6deg) scale(1.1)":"none",transition:"all .3s"}}>{game.emoji||"🎮"}</div>
+          <div style={{width:36,height:36,borderRadius:10,background:game.color+"18",border:`1px solid ${game.color}${hov?"55":"33"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0,transform:hov?"rotate(-6deg) scale(1.1)":"none",transition:"all .3s"}}>{game.emoji||({game:"🎮",web:"🌐",design:"🎨"}[game.type]||"🎮")}</div>
         </div>
         <p style={{color:"rgba(255,255,255,.48)",fontSize:13,lineHeight:1.65,marginBottom:14}}>{game.desc}</p>
         <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
@@ -652,6 +652,8 @@ export default function App(){
   // editable & deletable). The built-in games are just a starter showcase
   // shown until your first project exists.
   const allProjects=extraProjects.length?extraProjects:games;
+  const gamesVr=allProjects.filter(p=>(p.type||"game")==="game");
+  const work=allProjects.filter(p=>(p.type||"game")!=="game");
   const [immersive,setImmersive]=useState(false);
 
   useEffect(()=>{
@@ -691,7 +693,7 @@ export default function App(){
     <div style={{background:"#05050a",minHeight:"100vh",overflowX:"hidden"}}>
       {!isMobile&&<Cursor pos={mouse}/>}
       {activeProject&&<ProjectModal project={activeProject} onClose={()=>setActiveProject(null)}/>}
-      {immersive&&<Suspense fallback={<div style={{position:"fixed",inset:0,zIndex:2000,background:"#05050a",display:"flex",alignItems:"center",justifyContent:"center",color:"#22d3ee",fontFamily:"'Syne',sans-serif",letterSpacing:6,fontSize:14}}>LOADING…</div>}><ImmersiveGallery projects={allProjects} onExit={()=>setImmersive(false)} onOpen={setActiveProject}/></Suspense>}
+      {immersive&&<Suspense fallback={<div style={{position:"fixed",inset:0,zIndex:2000,background:"#05050a",display:"flex",alignItems:"center",justifyContent:"center",color:"#22d3ee",fontFamily:"'Syne',sans-serif",letterSpacing:6,fontSize:14}}>LOADING…</div>}><ImmersiveGallery projects={gamesVr} onExit={()=>setImmersive(false)} onOpen={setActiveProject}/></Suspense>}
       <AiAssistant/>
       <GridCanvas mouse={mouse}/>
       <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}>
@@ -855,24 +857,33 @@ export default function App(){
 
         {/* PROJECTS */}
         <section id="projects" style={{paddingTop:isMobile?60:100}}>
-          <SectionHeading tag="Games · Web · Design" title="Projects" icon={Gamepad2} iconColor="#a78bfa"/>
-          <FadeIn>
-            <div onClick={()=>setImmersive(true)} role="button" tabIndex={0}
-              onKeyDown={e=>{if(e.key==="Enter")setImmersive(true);}}
-              style={{cursor:"pointer",marginBottom:22,borderRadius:20,padding:isMobile?"20px 20px":"22px 28px",display:"flex",alignItems:"center",gap:18,flexWrap:"wrap",position:"relative",overflow:"hidden",border:"1px solid rgba(34,211,238,.25)",background:"linear-gradient(120deg,rgba(34,211,238,.10),rgba(192,132,252,.10))",backdropFilter:"blur(14px)",transition:"transform .25s,box-shadow .25s,border-color .25s"}}
-              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 18px 60px rgba(34,211,238,.18)";e.currentTarget.style.borderColor="rgba(34,211,238,.5)";}}
-              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor="rgba(34,211,238,.25)";}}>
-              <div style={{fontSize:34,filter:"drop-shadow(0 0 12px rgba(34,211,238,.6))"}}>🥽</div>
-              <div style={{flex:1,minWidth:200}}>
-                <div style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:isMobile?18:21}}>Enter the Immersive Gallery</div>
-                <div style={{color:"rgba(255,255,255,.55)",fontSize:13.5,marginTop:3}}>Explore my games & VR projects in an interactive 3D space</div>
+          {gamesVr.length>0&&(<>
+            <SectionHeading tag="Unity · C# · AR/VR" title="Games & VR" icon={Gamepad2} iconColor="#a78bfa"/>
+            <FadeIn>
+              <div onClick={()=>setImmersive(true)} role="button" tabIndex={0}
+                onKeyDown={e=>{if(e.key==="Enter")setImmersive(true);}}
+                style={{cursor:"pointer",marginBottom:22,borderRadius:20,padding:isMobile?"20px 20px":"22px 28px",display:"flex",alignItems:"center",gap:18,flexWrap:"wrap",position:"relative",overflow:"hidden",border:"1px solid rgba(34,211,238,.25)",background:"linear-gradient(120deg,rgba(34,211,238,.10),rgba(192,132,252,.10))",backdropFilter:"blur(14px)",transition:"transform .25s,box-shadow .25s,border-color .25s"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 18px 60px rgba(34,211,238,.18)";e.currentTarget.style.borderColor="rgba(34,211,238,.5)";}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor="rgba(34,211,238,.25)";}}>
+                <div style={{fontSize:34,filter:"drop-shadow(0 0 12px rgba(34,211,238,.6))"}}>🥽</div>
+                <div style={{flex:1,minWidth:200}}>
+                  <div style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:isMobile?18:21}}>Enter the Immersive Gallery</div>
+                  <div style={{color:"rgba(255,255,255,.55)",fontSize:13.5,marginTop:3}}>Explore my games & VR projects in an interactive 3D space</div>
+                </div>
+                <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 20px",borderRadius:99,background:"linear-gradient(135deg,#22d3ee,#0891b2)",color:"#04121a",fontWeight:700,fontSize:13.5}}>Launch 3D ✦</div>
               </div>
-              <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 20px",borderRadius:99,background:"linear-gradient(135deg,#22d3ee,#0891b2)",color:"#04121a",fontWeight:700,fontSize:13.5}}>Launch 3D ✦</div>
+            </FadeIn>
+            <div className="three-col">
+              {gamesVr.map((g,i)=><GameCard key={g.id||g.title} game={g} index={i} onOpen={setActiveProject}/>)}
             </div>
-          </FadeIn>
-          <div className="three-col">
-            {allProjects.map((g,i)=><GameCard key={g.id||g.title} game={g} index={i} onOpen={setActiveProject}/>)}
-          </div>
+          </>)}
+          {work.length>0&&(<>
+            <div style={{height:gamesVr.length>0?(isMobile?52:80):0}}/>
+            <SectionHeading tag="Web · Development · Design" title="Work & Projects" icon={Code} iconColor="#22d3ee"/>
+            <div className="three-col">
+              {work.map((g,i)=><GameCard key={g.id||g.title} game={g} index={i} onOpen={setActiveProject}/>)}
+            </div>
+          </>)}
         </section>
 
         <SectionDivider/>
