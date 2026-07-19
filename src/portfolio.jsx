@@ -553,6 +553,92 @@ function NavBar({scrollPct,isMobile}){
 /* ════════════════════════════════════════════════════════════════
    APP
 ════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   AI ASSISTANT — a talking guide grounded in the CV + projects
+════════════════════════════════════════════════════════════════ */
+function AiAssistant(){
+  const [open,setOpen]=useState(false);
+  const [voice,setVoice]=useState(false);
+  const [input,setInput]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [msgs,setMsgs]=useState([{role:"assistant",content:"Hi 👋 I'm Adhurim's AI assistant. Ask me about his skills, projects, or experience."}]);
+  const bodyRef=useRef(null);
+  useEffect(()=>{if(bodyRef.current)bodyRef.current.scrollTop=bodyRef.current.scrollHeight;},[msgs,open,busy]);
+  const stopSpeak=()=>{try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch{/* no tts */}};
+  const speak=(t)=>{try{if(!voice||!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=1.03;window.speechSynthesis.speak(u);}catch{/* no tts */}};
+  useEffect(()=>{if(!voice)stopSpeak();},[voice]);
+  const send=async(q)=>{
+    const text=(q??input).trim(); if(!text||busy)return;
+    setInput("");
+    const history=msgs.slice(-4);
+    setMsgs(m=>[...m,{role:"user",content:text}]);
+    setBusy(true);
+    try{
+      const r=await fetch("/api/assistant",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({message:text,history})});
+      const d=await r.json().catch(()=>({}));
+      const reply=d.reply||"Sorry, something went wrong — try the contact section below.";
+      setMsgs(m=>[...m,{role:"assistant",content:reply}]);
+      speak(reply);
+    }catch{
+      setMsgs(m=>[...m,{role:"assistant",content:"I couldn't reach the server just now. You can still explore the projects or use the contact section."}]);
+    }finally{setBusy(false);}
+  };
+  const chips=["What are his top skills?","Tell me about his projects","Is he available for work?"];
+  const bubble=(role)=>({
+    alignSelf:role==="user"?"flex-end":"flex-start",
+    maxWidth:"85%",
+    padding:"9px 13px",
+    borderRadius:role==="user"?"14px 14px 4px 14px":"14px 14px 14px 4px",
+    background:role==="user"?"linear-gradient(135deg,#22d3ee,#0891b2)":"rgba(255,255,255,.06)",
+    color:role==="user"?"#04121a":"rgba(255,255,255,.9)",
+    border:role==="user"?"none":"1px solid rgba(255,255,255,.09)",
+    fontSize:14,lineHeight:1.5,fontWeight:role==="user"?600:400,
+  });
+  return(
+    <>
+      {/* Launcher */}
+      <button onClick={()=>setOpen(o=>!o)} aria-label="Ask Adhurim's AI assistant"
+        style={{position:"fixed",bottom:24,right:24,zIndex:1500,width:64,height:64,borderRadius:"50%",border:"2px solid rgba(34,211,238,.6)",padding:0,overflow:"hidden",cursor:"pointer",background:"#05050a",boxShadow:"0 8px 30px rgba(34,211,238,.35)",transition:"transform .2s"}}
+        onMouseEnter={e=>e.currentTarget.style.transform="scale(1.06)"}
+        onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}>
+        <img src={PHOTO} alt="AI" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 20%"}}/>
+        <span style={{position:"absolute",bottom:2,right:2,width:16,height:16,borderRadius:"50%",background:"#34d399",border:"2px solid #05050a"}}/>
+      </button>
+
+      {/* Panel */}
+      {open&&(
+        <div style={{position:"fixed",bottom:100,right:24,zIndex:1500,width:"min(370px,calc(100vw - 32px))",height:"min(520px,calc(100vh - 140px))",display:"flex",flexDirection:"column",borderRadius:20,overflow:"hidden",background:"rgba(8,8,18,.97)",border:"1px solid rgba(34,211,238,.25)",boxShadow:"0 20px 70px rgba(0,0,0,.6)",backdropFilter:"blur(16px)"}}>
+          {/* header */}
+          <div style={{display:"flex",alignItems:"center",gap:11,padding:"13px 15px",borderBottom:"1px solid rgba(255,255,255,.08)"}}>
+            <img src={PHOTO} alt="" style={{width:38,height:38,borderRadius:"50%",objectFit:"cover",objectPosition:"center 20%",border:"1px solid rgba(34,211,238,.4)"}}/>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:15}}>Adhurim's AI</div>
+              <div style={{color:"#34d399",fontSize:11,fontWeight:600}}>● online · ask me anything</div>
+            </div>
+            <button onClick={()=>setVoice(v=>!v)} title={voice?"Voice on":"Voice off"} style={{width:34,height:34,borderRadius:10,border:"1px solid rgba(255,255,255,.12)",background:voice?"rgba(34,211,238,.15)":"rgba(255,255,255,.04)",color:voice?"#22d3ee":"rgba(255,255,255,.5)",cursor:"pointer",fontSize:15}}>{voice?"🔊":"🔇"}</button>
+            <button onClick={()=>{setOpen(false);stopSpeak();}} style={{width:34,height:34,borderRadius:10,border:"1px solid rgba(255,255,255,.12)",background:"rgba(255,255,255,.04)",color:"rgba(255,255,255,.6)",cursor:"pointer",fontSize:15}}>✕</button>
+          </div>
+          {/* messages */}
+          <div ref={bodyRef} style={{flex:1,overflowY:"auto",padding:15,display:"flex",flexDirection:"column",gap:10}}>
+            {msgs.map((m,i)=><div key={i} style={bubble(m.role)}>{m.content}</div>)}
+            {busy&&<div style={{...bubble("assistant"),color:"rgba(255,255,255,.4)"}}>typing…</div>}
+            {msgs.length<=1&&!busy&&(
+              <div style={{display:"flex",flexWrap:"wrap",gap:7,marginTop:4}}>
+                {chips.map(c=><button key={c} onClick={()=>send(c)} style={{padding:"7px 12px",borderRadius:99,border:"1px solid rgba(34,211,238,.3)",background:"rgba(34,211,238,.06)",color:"#67e8f9",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"'Outfit',sans-serif"}}>{c}</button>)}
+              </div>
+            )}
+          </div>
+          {/* input */}
+          <form onSubmit={e=>{e.preventDefault();send();}} style={{display:"flex",gap:8,padding:"12px 14px",borderTop:"1px solid rgba(255,255,255,.08)"}}>
+            <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Ask about Adhurim…" style={{flex:1,background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.1)",borderRadius:99,color:"#fff",fontSize:14,padding:"10px 15px",outline:"none",fontFamily:"'Outfit',sans-serif"}}/>
+            <button type="submit" disabled={busy||!input.trim()} aria-label="Send" style={{width:42,height:42,borderRadius:"50%",border:"none",background:"linear-gradient(135deg,#22d3ee,#0891b2)",color:"#04121a",fontWeight:800,cursor:busy?"not-allowed":"pointer",opacity:busy||!input.trim()?.5:1,flexShrink:0}}>➤</button>
+          </form>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function App(){
   const [mouse,setMouse]=useState({x:-200,y:-200});
   const [loaded,setLoaded]=useState(false);
@@ -606,6 +692,7 @@ export default function App(){
       {!isMobile&&<Cursor pos={mouse}/>}
       {activeProject&&<ProjectModal project={activeProject} onClose={()=>setActiveProject(null)}/>}
       {immersive&&<Suspense fallback={<div style={{position:"fixed",inset:0,zIndex:2000,background:"#05050a",display:"flex",alignItems:"center",justifyContent:"center",color:"#22d3ee",fontFamily:"'Syne',sans-serif",letterSpacing:6,fontSize:14}}>LOADING…</div>}><ImmersiveGallery projects={allProjects} onExit={()=>setImmersive(false)} onOpen={setActiveProject}/></Suspense>}
+      <AiAssistant/>
       <GridCanvas mouse={mouse}/>
       <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}>
         <div style={{position:"absolute",top:"15%",left:"-10%",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(34,211,238,.06) 0%,transparent 70%)",animation:"float 8s ease infinite"}}/>

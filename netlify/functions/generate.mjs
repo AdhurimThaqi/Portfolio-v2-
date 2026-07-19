@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { loadProfile } from "./lib/cv.mjs";
+import { providerConfig, callModel } from "./lib/ai.mjs";
 
 /* ── auth (mirrors auth.mjs / projects.mjs) ───────────────────── */
 const json = (data, status = 200) =>
@@ -31,78 +32,6 @@ function requireAuth(req) {
   if (!secret) return false;
   const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
   return !!verify(token, secret);
-}
-
-/* ── provider config ──────────────────────────────────────────────
-   Default: Anthropic (ANTHROPIC_API_KEY / ANTHROPIC_MODEL).
-   Set AI_PROVIDER=openai to use ANY OpenAI-compatible chat endpoint —
-   Hugging Face, Groq, Together, OpenRouter, OpenAI, etc.:
-     AI_PROVIDER = openai
-     AI_API_KEY  = hf_... (or the provider's key)
-     AI_BASE_URL = https://router.huggingface.co/v1
-     AI_MODEL    = meta-llama/Llama-3.3-70B-Instruct
-*/
-function providerConfig() {
-  const provider = (process.env.AI_PROVIDER || "anthropic").toLowerCase();
-  if (provider === "openai" || provider === "openai-compatible") {
-    return {
-      provider: "openai",
-      apiKey: process.env.AI_API_KEY,
-      baseUrl: (process.env.AI_BASE_URL || "https://router.huggingface.co/v1").replace(/\/+$/, ""),
-      model: process.env.AI_MODEL || "meta-llama/Llama-3.3-70B-Instruct",
-    };
-  }
-  return {
-    provider: "anthropic",
-    apiKey: process.env.ANTHROPIC_API_KEY || process.env.AI_API_KEY,
-    model: process.env.ANTHROPIC_MODEL || process.env.AI_MODEL || "claude-opus-4-8",
-  };
-}
-
-/* Calls the model and returns the raw text. Throws { status, detail } on a
-   non-2xx response; propagates AbortError on timeout. */
-async function callModel(cfg, system, user, signal) {
-  if (cfg.provider === "anthropic") {
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      signal,
-      headers: {
-        "x-api-key": cfg.apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: cfg.model,
-        max_tokens: 6000,
-        system,
-        messages: [{ role: "user", content: user }],
-      }),
-    });
-    if (!resp.ok) throw { status: resp.status, detail: await resp.text().catch(() => "") };
-    const data = await resp.json();
-    return (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
-  }
-
-  // OpenAI-compatible chat completions (HF / Groq / Together / OpenRouter / OpenAI)
-  const resp = await fetch(`${cfg.baseUrl}/chat/completions`, {
-    method: "POST",
-    signal,
-    headers: {
-      authorization: `Bearer ${cfg.apiKey}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: cfg.model,
-      max_tokens: 6000,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-    }),
-  });
-  if (!resp.ok) throw { status: resp.status, detail: await resp.text().catch(() => "") };
-  const data = await resp.json();
-  return data.choices?.[0]?.message?.content || "";
 }
 
 /* ── prompt construction ──────────────────────────────────────── */
