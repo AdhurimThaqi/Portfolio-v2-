@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ApplicationAI from "./ApplicationAI.jsx";
 import ProfileEditor from "./ProfileEditor.jsx";
+import CvBuilder from "./CvBuilder.jsx";
 
 /* ════════════════════════════════════════════════════════════════
    CONFIG
@@ -732,6 +733,7 @@ export default function AdminApp() {
           ["projects", "Projects"],
           ["applications", "Application AI"],
           ["profile", "My CV Profile"],
+          ["cv", "CV Builder"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -764,6 +766,15 @@ export default function AdminApp() {
         />
       ) : tab === "profile" ? (
         <ProfileEditor
+          token={token}
+          onToast={flash}
+          onSessionExpired={() => {
+            flash("Session expired — please sign in again");
+            logout();
+          }}
+        />
+      ) : tab === "cv" ? (
+        <CvBuilder
           token={token}
           onToast={flash}
           onSessionExpired={() => {
