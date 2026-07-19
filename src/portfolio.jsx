@@ -721,6 +721,19 @@ export default function App(){
                 Computer Science Student · Creative Developer · Multidisciplinary Designer.<br/>
                 Studying BSc Immersive Technologies at HSLU, building digital products that merge high-end aesthetic design with robust software engineering.
               </p>
+              <div style={{opacity:loaded?1:0,transition:"all .9s ease .55s",display:"flex",gap:12,marginBottom:24,justifyContent:isMobile?"center":"flex-start"}}>
+                {[
+                  {label:"GitHub",href:"https://github.com/AdhurimThaqi",path:"M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.57.1.78-.25.78-.55v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.46.11-3.05 0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.83 0c2.22-1.5 3.2-1.18 3.2-1.18.63 1.59.23 2.76.11 3.05.75.81 1.2 1.84 1.2 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.66.79.55A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"},
+                  {label:"LinkedIn",href:"https://www.linkedin.com/in/adhurim-thaqi-b0b9a9193/",path:"M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0Z"},
+                ].map(s=>(
+                  <a key={s.label} href={s.href} target="_blank" rel="noreferrer" aria-label={s.label} title={s.label}
+                    style={{width:44,height:44,borderRadius:12,display:"inline-flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(255,255,255,.14)",background:"rgba(255,255,255,.04)",color:"rgba(255,255,255,.7)",transition:"all .2s"}}
+                    onMouseEnter={e=>{e.currentTarget.style.color="#22d3ee";e.currentTarget.style.borderColor="rgba(34,211,238,.5)";e.currentTarget.style.background="rgba(34,211,238,.1)";e.currentTarget.style.transform="translateY(-2px)";}}
+                    onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.7)";e.currentTarget.style.borderColor="rgba(255,255,255,.14)";e.currentTarget.style.background="rgba(255,255,255,.04)";e.currentTarget.style.transform="none";}}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={s.path}/></svg>
+                  </a>
+                ))}
+              </div>
               <div style={{opacity:loaded?1:0,transition:"all .9s ease .6s",display:"flex",gap:14,flexWrap:"wrap",marginBottom:isMobile?32:44,justifyContent:isMobile?"center":"flex-start"}}>
                 <a href="#experience" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"12px 26px",borderRadius:99,background:"rgba(34,211,238,.12)",border:"1px solid rgba(34,211,238,.3)",color:"#a5f3fc",fontWeight:600,fontSize:14,transition:"background .2s,box-shadow .2s"}}
                   onMouseEnter={e=>{e.currentTarget.style.background="rgba(34,211,238,.22)";e.currentTarget.style.boxShadow="0 0 30px rgba(34,211,238,.2)";}}
