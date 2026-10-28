@@ -2,52 +2,110 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary meta -->
-    <title>Adhurim Thaqi — Software Developer & Immersive Tech</title>
-    <meta name="description" content="Adhurim Thaqi — Software Developer, UI/UX Designer & Immersive Tech developer in Zürich. Building web apps, games, and AR/VR that merge high-end design with robust engineering. React · Vue · Unity · AR/VR." />
+    <title>Adhurim Thaqi — Software Developer &amp; Immersive Tech | Zürich</title>
+    <meta name="description" content="Adhurim Thaqi is a software developer and designer from Zürich studying Immersive Technologies at HSLU. Websites, Unity games and AR/VR projects." />
     <meta name="author" content="Adhurim Thaqi" />
-    <meta name="keywords" content="Adhurim Thaqi, Software Developer, UI/UX Designer, Frontend Developer, React, Vue, Unity, AR, VR, Immersive Technologies, HSLU, Zürich, Switzerland, Portfolio" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="https://adhurim.ch/" />
     <meta name="theme-color" content="#05050a" />
 
+    <!-- Icons (Google uses the .ico / 48px PNG in search results) -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Outfit:wght@300;400;500;600&display=swap" />
+    <link rel="preload" as="image" href="/images/adhurim-thaqi.jpg" />
+
     <!-- Open Graph (LinkedIn, Facebook, Slack, WhatsApp) -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="profile" />
     <meta property="og:site_name" content="Adhurim Thaqi" />
-    <meta property="og:title" content="Adhurim Thaqi — Software Developer & Immersive Tech" />
-    <meta property="og:description" content="Software Developer, UI/UX Designer & Immersive Tech developer in Zürich. Web · Games · AR/VR — high-end design meets robust engineering." />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Adhurim Thaqi — Software Developer &amp; Immersive Tech" />
+    <meta property="og:description" content="Software developer and designer from Zürich. Websites, Unity games and AR/VR projects." />
     <meta property="og:url" content="https://adhurim.ch/" />
     <meta property="og:image" content="https://adhurim.ch/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Adhurim Thaqi — Software Developer, UI/UX Designer & Immersive Tech" />
+    <meta property="og:image:alt" content="Adhurim Thaqi — Software Developer &amp; Immersive Tech" />
+    <meta property="profile:first_name" content="Adhurim" />
+    <meta property="profile:last_name" content="Thaqi" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Adhurim Thaqi — Software Developer & Immersive Tech" />
-    <meta name="twitter:description" content="Software Developer, UI/UX Designer & Immersive Tech developer in Zürich. Web · Games · AR/VR." />
+    <meta name="twitter:title" content="Adhurim Thaqi — Software Developer &amp; Immersive Tech" />
+    <meta name="twitter:description" content="Software developer and designer from Zürich. Websites, Unity games and AR/VR projects." />
     <meta name="twitter:image" content="https://adhurim.ch/og-image.png" />
 
-    <!-- Structured data: helps Google identify you on a name search -->
+    <!-- Structured data: helps Google connect the site, photo and profiles to your name -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Adhurim Thaqi",
-      "url": "https://adhurim.ch/",
-      "image": "https://adhurim.ch/og-image.png",
-      "jobTitle": "Software Developer & UI/UX Designer",
-      "address": { "@type": "PostalAddress", "addressLocality": "Dübendorf, Zürich", "addressCountry": "CH" },
-      "alumniOf": [{ "@type": "CollegeOrUniversity", "name": "Hochschule Luzern (HSLU)" }],
-      "knowsAbout": ["React", "Vue.js", "Node.js", "Unity", "AR/VR", "UI/UX Design", "Immersive Technologies"],
-      "sameAs": ["https://github.com/adhurimthaqi"]
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://adhurim.ch/#website",
+          "url": "https://adhurim.ch/",
+          "name": "Adhurim Thaqi",
+          "inLanguage": "en"
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": "https://adhurim.ch/#profile",
+          "url": "https://adhurim.ch/",
+          "name": "Adhurim Thaqi — Portfolio",
+          "isPartOf": { "@id": "https://adhurim.ch/#website" },
+          "mainEntity": { "@id": "https://adhurim.ch/#person" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://adhurim.ch/#person",
+          "name": "Adhurim Thaqi",
+          "url": "https://adhurim.ch/",
+          "image": "https://adhurim.ch/images/adhurim-thaqi.jpg",
+          "email": "mailto:adhurimthaqi@gmx.ch",
+          "jobTitle": "Software Developer & UI/UX Designer",
+          "address": { "@type": "PostalAddress", "addressLocality": "Dübendorf", "addressRegion": "Zürich", "addressCountry": "CH" },
+          "alumniOf": { "@type": "CollegeOrUniversity", "name": "Hochschule Luzern (HSLU)" },
+          "knowsAbout": ["Web Development", "React", "Vue.js", "Unity", "C#", "AR/VR", "UI/UX Design", "3D Modelling"],
+          "knowsLanguage": ["sq", "en", "de"],
+          "sameAs": [
+            "https://github.com/AdhurimThaqi",
+            "https://www.linkedin.com/in/adhurim-thaqi-b0b9a9193/"
+          ]
+        }
+      ]
     }
     </script>
   </head>
-  <body>
-    <div id="root"></div>
+  <body style="margin:0;background:#05050a;color:#fff">
+    <!-- Readable by search engines before JavaScript runs; React replaces it on load. -->
+    <div id="root">
+      <main style="max-width:720px;margin:0 auto;padding:96px 24px;font-family:system-ui,sans-serif;color:rgba(255,255,255,.75);line-height:1.6">
+        <h1 style="color:#fff">Adhurim Thaqi</h1>
+        <p>Software developer and designer based in Dübendorf, Zürich. I'm studying BSc Immersive Technologies at HSLU and build websites, Unity games and AR/VR projects.</p>
+        <h2 style="color:#fff">Projects</h2>
+        <ul>
+          <li>CoinQuest — 3D adventure game in Unity 6 with procedurally generated levels.</li>
+          <li>Pitchblind — pixel-art top-down RPG in Unity 6.</li>
+          <li>Museum Game — educational, interactive 3D museum built with Unity and Blender.</li>
+        </ul>
+        <p>
+          <a href="/Adhurim_Thaqi_CV.pdf" style="color:#22d3ee">CV (PDF)</a> ·
+          <a href="https://github.com/AdhurimThaqi" style="color:#22d3ee">GitHub</a> ·
+          <a href="https://www.linkedin.com/in/adhurim-thaqi-b0b9a9193/" style="color:#22d3ee">LinkedIn</a> ·
+          <a href="mailto:adhurimthaqi@gmx.ch" style="color:#22d3ee">adhurimthaqi@gmx.ch</a>
+        </p>
+      </main>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,0 +1,22 @@
+{
+  "order": 2,
+  "title": "Pitchblind",
+  "type": "game",
+  "category": "2D Top-Down RPG",
+  "tech": "Unity · C# · 2D",
+  "year": "2026",
+  "color": "#22d3ee",
+  "desc": "A pixel-art, top-down RPG built in Unity 6, with NPCs to talk to, items to pick up and enemies to fight.",
+  "features": [
+    "Tile-based world built in layers",
+    "NPC dialogue and interactive item pickups",
+    "Enemies that patrol, chase and attack",
+    "Inventory with potions, weapons and player stats"
+  ],
+  "challenge": "The player kept jittering and snagging on tile edges. Switching to composite colliders and a custom physics layer setup made movement smooth.",
+  "stack": ["Unity 6", "C#", "Tilemap", "2D Physics", "State Machines", "Pixel Art"],
+  "github": "https://github.com/AdhurimThaqi",
+  "liveUrl": "",
+  "playUrl": "",
+  "videoUrl": ""
+}

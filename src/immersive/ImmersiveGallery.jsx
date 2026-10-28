@@ -217,16 +217,6 @@ export default function ImmersiveGallery({ projects = [], onExit, onOpen }) {
     document.body.style.overflow = "hidden";
     const t1 = setTimeout(() => {
       setPhase("live");
-      // spoken greeting (entering via a click satisfies autoplay policy)
-      try {
-        const u = new SpeechSynthesisUtterance(
-          "Hi, I'm Adhurim. Welcome to my projects. Drag to look around, and tap any project to explore it.",
-        );
-        u.rate = 1.03;
-        window.speechSynthesis && window.speechSynthesis.speak(u);
-      } catch {
-        /* no tts */
-      }
     }, 1700);
     const esc = (e) => e.key === "Escape" && onExit?.();
     window.addEventListener("keydown", esc);
@@ -234,7 +224,6 @@ export default function ImmersiveGallery({ projects = [], onExit, onOpen }) {
       document.body.style.overflow = "";
       clearTimeout(t1);
       window.removeEventListener("keydown", esc);
-      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch { /* no tts */ }
     };
   }, []);
 

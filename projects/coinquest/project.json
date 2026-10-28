@@ -1,0 +1,22 @@
+{
+  "order": 1,
+  "title": "CoinQuest",
+  "type": "game",
+  "category": "3D Adventure",
+  "tech": "Unity · C#",
+  "year": "2025",
+  "color": "#a78bfa",
+  "desc": "A 3D adventure game made in Unity 6. You collect coins while enemies chase you, and every level is generated fresh from a seed.",
+  "features": [
+    "Levels generated from a seed, so each run plays differently",
+    "Enemies that patrol, spot you and chase you using pathfinding",
+    "HUD with coin counter, score and a quick restart",
+    "Physics-based character controller"
+  ],
+  "challenge": "Getting the difficulty right was the hard part. Fixed enemy speed was either too easy or unfair, so enemies now speed up gradually based on how well you're doing.",
+  "stack": ["Unity 6", "C#", "Procedural Generation", "Enemy AI", "Physics", "Level Design"],
+  "github": "https://github.com/AdhurimThaqi",
+  "liveUrl": "",
+  "playUrl": "",
+  "videoUrl": ""
+}

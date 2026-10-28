@@ -1,0 +1,22 @@
+{
+  "order": 3,
+  "title": "Museum Game",
+  "type": "game",
+  "category": "Interactive / HCI",
+  "tech": "Unity · C# · HCI",
+  "year": "2025",
+  "color": "#fb923c",
+  "desc": "An educational museum you can walk through. Exhibits are interactive and short quizzes turn the visit into a game.",
+  "features": [
+    "Walkable 3D museum with exhibits modelled in Blender",
+    "Hand-painted menu and an outdoor area",
+    "Quizzes and a small story that guide you through the exhibits",
+    "Tested with real users and improved based on their feedback"
+  ],
+  "challenge": "The goal was to make learning fun without dumbing down the content. Pacing rewards and revealing exhibits step by step kept players curious.",
+  "stack": ["Unity", "C#", "Blender", "HCI", "User Testing", "3D Modelling"],
+  "github": "https://github.com/AdhurimThaqi",
+  "liveUrl": "",
+  "playUrl": "",
+  "videoUrl": ""
+}
