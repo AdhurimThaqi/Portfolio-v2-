@@ -123,6 +123,9 @@ export default async (req) => {
     }
     // Surface the real cause in the function logs instead of silently masking it.
     console.error(`[assistant] ${cfg.provider}/${cfg.model} failed:`, e?.status || e?.message || e, String(e?.detail || "").slice(0, 500));
-    return json({ reply: OFFLINE, offline: true, reason: e?.status ? `api_error_${e.status}` : "api_error" });
+    const why = e?.status
+      ? `api_error_${e.status}`
+      : `api_error: ${e?.name || "Error"}: ${String(e?.message || e).slice(0, 160)}${e?.cause?.code ? ` (${e.cause.code})` : ""}`;
+    return json({ reply: OFFLINE, offline: true, reason: why, provider: cfg.provider, model: cfg.model });
   }
 };
