@@ -449,7 +449,6 @@ function ContactSection({isMobile}){
     {icon:"✉",label:"Email",val:"adhurimthaqi@gmx.ch",href:"mailto:adhurimthaqi@gmx.ch"},
     {icon:"📍",label:"Location",val:"Dübendorf, Zürich, CH",href:null},
     {icon:"🌐",label:"Website",val:"adhurim.ch",href:"https://adhurim.ch"},
-    {icon:"📞",label:"Phone",val:"+41 79 891 05 02",href:"tel:+41798910502"},
   ];
   return(
     <section id="contact" style={{paddingTop:isMobile?60:100}}>
