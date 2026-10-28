@@ -1,15 +1,64 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Billboard, Html, Stars, useTexture, useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 
-useGLTF.preload("/host.glb");
+useGLTF.preload("/character.glb");
 
-/* ── the 3D host — greets visitors, waves, then idles ─────────── */
+/* ── the 3D host — Adhurim's own avatar ───────────────────────────
+   The model ships in a T-pose with no animation clips, so the arms are
+   lowered once and a light idle (breathing, sway, head follows the pointer)
+   runs in code. If Idle/Wave clips are ever added to the .glb (e.g. from
+   Mixamo), those play instead. */
+const HOST_SCALE = 1.75; // model is 1.87 m tall → about the old host's size
+
+// Rotate an upper-arm bone in world space so it hangs down beside the body.
+function relaxArm(scene, armName, foreArmName) {
+  const arm = scene.getObjectByName(armName);
+  const fore = scene.getObjectByName(foreArmName);
+  if (!arm || !fore || !arm.parent) return;
+  scene.updateMatrixWorld(true);
+  const from = fore.getWorldPosition(new THREE.Vector3()).sub(arm.getWorldPosition(new THREE.Vector3())).normalize();
+  const to = new THREE.Vector3(Math.sign(from.x) * 0.18, -1, 0.06).normalize();
+  const delta = new THREE.Quaternion().setFromUnitVectors(from, to);
+  const world = arm.getWorldQuaternion(new THREE.Quaternion());
+  const parentInv = arm.parent.getWorldQuaternion(new THREE.Quaternion()).invert();
+  arm.quaternion.copy(parentInv.multiply(delta.multiply(world)));
+}
+
 function Host() {
   const group = useRef();
-  const { scene, animations } = useGLTF("/host.glb");
+  const { scene, animations } = useGLTF("/character.glb");
   const { actions, mixer } = useAnimations(animations, group);
+  const procedural = !actions.Idle && !actions.Wave;
+
+  // Bones + their rest rotations for the code-driven idle.
+  const rig = useMemo(() => {
+    if (!procedural) return null;
+    relaxArm(scene, "LeftArm", "LeftForeArm");
+    relaxArm(scene, "RightArm", "RightForeArm");
+    const pick = (n) => {
+      const bone = scene.getObjectByName(n);
+      return bone && { bone, rest: bone.quaternion.clone() };
+    };
+    return { spine: pick("Spine2"), neck: pick("Neck"), head: pick("Head") };
+  }, [scene, procedural]);
+
+  const look = useRef({ x: 0, y: 0 });
+  useFrame(({ clock, pointer }, dt) => {
+    if (!rig) return;
+    const t = clock.elapsedTime;
+    const q = new THREE.Quaternion();
+    const e = new THREE.Euler();
+    const pose = (b, x, y, z) => b && b.bone.quaternion.copy(b.rest).multiply(q.setFromEuler(e.set(x, y, z)));
+    const k = Math.min(1, dt * 3);
+    look.current.x += (pointer.x * 0.45 - look.current.x) * k;
+    look.current.y += (-pointer.y * 0.2 - look.current.y) * k;
+    pose(rig.spine, Math.sin(t * 1.6) * 0.025, Math.sin(t * 0.5) * 0.03, Math.sin(t * 0.7) * 0.015);
+    pose(rig.neck, look.current.y * 0.4, look.current.x * 0.4, 0);
+    pose(rig.head, look.current.y * 0.6, look.current.x * 0.6, 0);
+  });
+
   useEffect(() => {
     const idle = actions.Idle;
     const wave = actions.Wave;
@@ -28,9 +77,11 @@ function Host() {
   }, [actions, mixer]);
 
   return (
-    <group ref={group} position={[0, -3.2, 1.8]} scale={0.72} dispose={null}>
+    <group ref={group} position={[0, -3.2, 1.8]} scale={HOST_SCALE} dispose={null}>
+      {/* neutral key light so skin/clothes aren't tinted by the coloured scene lights */}
+      <directionalLight position={[1.5, 3, 4]} intensity={1.6} color="#ffffff" />
       <primitive object={scene} />
-      <Html position={[0, 7.4, 0]} center distanceFactor={10} pointerEvents="none">
+      <Html position={[0, 2.3, 0]} center distanceFactor={10} pointerEvents="none">
         <div
           style={{
             width: 210,

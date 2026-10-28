@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw source models (the site uses the compressed copy in public/)
+projects/*.glb
