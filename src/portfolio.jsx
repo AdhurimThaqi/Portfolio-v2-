@@ -581,6 +581,14 @@ function ExperienceModal({item,onClose}){
 /* ════════════════════════════════════════════════════════════════
    AI ASSISTANT — a talking guide grounded in the CV + projects
 ════════════════════════════════════════════════════════════════ */
+/* AI avatar: gradient orb with a sparkle, used on the launcher and chat header. */
+function AiOrb({size}){
+  return(
+    <div aria-hidden="true" style={{width:size,height:size,borderRadius:"50%",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",background:"radial-gradient(circle at 30% 25%,#a5f3fc 0%,#22d3ee 28%,#7c3aed 72%,#3b0764 100%)",boxShadow:"inset 0 -4px 12px rgba(0,0,0,.35),inset 0 3px 8px rgba(255,255,255,.3)"}}>
+      <Sparkles size={Math.round(size*.48)} color="#fff" strokeWidth={2.2}/>
+    </div>
+  );
+}
 function AiAssistant(){
   const [open,setOpen]=useState(false);
   const [input,setInput]=useState("");
@@ -621,7 +629,7 @@ function AiAssistant(){
         style={{position:"fixed",bottom:24,right:24,zIndex:1500,width:64,height:64,borderRadius:"50%",border:"2px solid rgba(34,211,238,.6)",padding:0,overflow:"hidden",cursor:"pointer",background:"#05050a",boxShadow:"0 8px 30px rgba(34,211,238,.35)",transition:"transform .2s"}}
         onMouseEnter={e=>e.currentTarget.style.transform="scale(1.06)"}
         onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}>
-        <img src={PHOTO} alt="AI" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 20%"}}/>
+        <AiOrb size={60}/>
         <span style={{position:"absolute",bottom:2,right:2,width:16,height:16,borderRadius:"50%",background:"#34d399",border:"2px solid #05050a"}}/>
       </button>
 
@@ -630,7 +638,7 @@ function AiAssistant(){
         <div style={{position:"fixed",bottom:100,right:24,zIndex:1500,width:"min(370px,calc(100vw - 32px))",height:"min(520px,calc(100vh - 140px))",display:"flex",flexDirection:"column",borderRadius:20,overflow:"hidden",background:"rgba(8,8,18,.97)",border:"1px solid rgba(34,211,238,.25)",boxShadow:"0 20px 70px rgba(0,0,0,.6)",backdropFilter:"blur(16px)"}}>
           {/* header */}
           <div style={{display:"flex",alignItems:"center",gap:11,padding:"13px 15px",borderBottom:"1px solid rgba(255,255,255,.08)"}}>
-            <img src={PHOTO} alt="" style={{width:38,height:38,borderRadius:"50%",objectFit:"cover",objectPosition:"center 20%",border:"1px solid rgba(34,211,238,.4)"}}/>
+            <AiOrb size={38}/>
             <div style={{flex:1,minWidth:0}}>
               <div style={{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:15}}>Adhurim's AI</div>
               <div style={{color:"#34d399",fontSize:11,fontWeight:600}}>● online</div>
