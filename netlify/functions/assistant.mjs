@@ -126,6 +126,17 @@ const OFFLINE =
 
 /* ── POST /api/assistant  { message, history? } ───────────────── */
 export default async (req) => {
+  // TEMP diagnostic: is ASSISTANT_SECRETS visible to this function? (no contents exposed)
+  if (req.method === "GET" && new URL(req.url).searchParams.has("secrets-check")) {
+    const raw = process.env.ASSISTANT_SECRETS;
+    let status = raw === undefined ? "missing" : `set, ${raw.length} chars`;
+    try {
+      if (raw !== undefined) status += `, valid JSON, ${JSON.parse(raw).length} entries`;
+    } catch (e) {
+      status += `, INVALID JSON: ${e.message.slice(0, 80)}; starts with code ${raw.charCodeAt(0)}`;
+    }
+    return json({ status });
+  }
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   let body;
