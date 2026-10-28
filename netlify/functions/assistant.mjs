@@ -27,6 +27,30 @@ async function rateLimited(req) {
   return false;
 }
 
+/* Easter eggs: a private trigger phrase gets a fixed reply instead of an AI answer.
+   Kept in the ASSISTANT_SECRETS env var, not in code, because the repo is public.
+   Format: [{"match":"xy 1234","reply":"Adhurim told me to say: ta gueule"}]
+   A trigger matches when the message contains it as whole words, ignoring case,
+   accents and punctuation. */
+const norm = (s) =>
+  String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+
+function secretReply(message) {
+  let list;
+  try {
+    list = JSON.parse(process.env.ASSISTANT_SECRETS || "[]");
+  } catch {
+    console.error("[assistant] ASSISTANT_SECRETS is not valid JSON");
+    return null;
+  }
+  const msg = ` ${norm(message)} `;
+  for (const s of Array.isArray(list) ? list : []) {
+    const trigger = norm(s?.match || "");
+    if (trigger && msg.includes(` ${trigger} `)) return String(s.reply || "");
+  }
+  return null;
+}
+
 /* Same projects the site shows: the projects/ folder (bundled at build time)
    plus anything added via /admin, skipping same-title duplicates. */
 async function loadProjects() {
@@ -112,6 +136,10 @@ export default async (req) => {
   }
   const message = String(body?.message || "").slice(0, 600).trim();
   if (!message) return json({ error: "Empty message" }, 400);
+
+  // Checked first: costs nothing and works even when the AI is offline or rate-limited.
+  const secret = secretReply(message);
+  if (secret) return json({ reply: secret });
 
   const cfg = providerConfig();
   // The public widget wants short, fast replies — allow a lighter model than the admin generator.
