@@ -282,6 +282,11 @@ function toEmbed(url){
       const id=u.pathname.split("/").filter(Boolean)[0];
       if(id&&/^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
     }
+    // Google Drive: /file/d/<id>/view → /file/d/<id>/preview (file must be shared "Anyone with the link")
+    if(host==="drive.google.com"){
+      const m=u.pathname.match(/\/file\/d\/([^/]+)/);
+      if(m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+    }
   }catch{/* not a valid URL */}
   return null;
 }
@@ -358,6 +363,9 @@ function ProjectModal({project,onClose}){
             {project.liveUrl&&<a href={project.liveUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 22px",borderRadius:99,border:`1px solid ${project.color}44`,background:project.color+"12",color:project.color,fontWeight:600,fontSize:13,transition:"all .2s"}}
               onMouseEnter={e=>{e.currentTarget.style.background=project.color+"26";e.currentTarget.style.boxShadow=`0 0 20px ${project.color}33`;}}
               onMouseLeave={e=>{e.currentTarget.style.background=project.color+"12";e.currentTarget.style.boxShadow="none";}}>↗ Live Demo</a>}
+            {project.docsUrl&&<a href={project.docsUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 22px",borderRadius:99,border:`1px solid ${project.color}44`,background:project.color+"12",color:project.color,fontWeight:600,fontSize:13,transition:"all .2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.background=project.color+"26";e.currentTarget.style.boxShadow=`0 0 20px ${project.color}33`;}}
+              onMouseLeave={e=>{e.currentTarget.style.background=project.color+"12";e.currentTarget.style.boxShadow="none";}}>📄 Documentation</a>}
             <button onClick={handleClose} style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:7,padding:"10px 20px",borderRadius:99,border:"1px solid rgba(255,255,255,.1)",background:"rgba(255,255,255,.04)",color:"rgba(255,255,255,.45)",fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"'Outfit',sans-serif",transition:"all .2s"}}
               onMouseEnter={e=>{e.currentTarget.style.color="#fff";e.currentTarget.style.background="rgba(255,255,255,.1)";}}
               onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.45)";e.currentTarget.style.background="rgba(255,255,255,.04)";}}>Close ✕</button>

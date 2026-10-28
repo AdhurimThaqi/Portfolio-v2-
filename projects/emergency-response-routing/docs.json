@@ -1,0 +1,54 @@
+{
+  "title": "Emergency Response Routing",
+  "kicker": "VR · Algorithms & Data Structures · HSLU",
+  "lead": "A Meta Quest 3 app that routes ambulances through a 68-intersection city and lets you watch BFS, Dijkstra and A* search for the route, step by step, in VR.",
+  "description": "Project documentation for Emergency Response Routing, a Meta Quest 3 VR app by Adhurim Thaqi that visualises BFS, Dijkstra and A* pathfinding on a city road graph.",
+  "url": "https://adhurim.ch/docs/emergency-response-routing/",
+  "color": "#f87171",
+  "keywords": [
+    "Pathfinding",
+    "A*",
+    "Dijkstra",
+    "Breadth-first search",
+    "Unity",
+    "Meta Quest 3",
+    "Virtual reality"
+  ],
+  "meta": [
+    "Unity 6",
+    "Meta Quest 3",
+    "C#",
+    "BFS · Dijkstra · A*",
+    "ADCREA · FS 2026"
+  ],
+  "links": [
+    {
+      "label": "▶ Watch the demo video",
+      "href": "https://drive.google.com/file/d/19SyZYZIdLdYtPtzH7e8FB-aUhU0nC4Vl/view"
+    },
+    {
+      "label": "⬇ Download PDF (15 pages)",
+      "href": "/docs/emergency-response-routing/Emergency_Response_Routing_Documentation.pdf"
+    },
+    {
+      "label": "All projects",
+      "href": "/#projects"
+    }
+  ],
+  "footer": "Semester project, ADCREA: Algorithms and Data Structures for Creative Technologies · BSc Immersive Technologies, HSLU · FS 2026",
+  "cutFrom": "### 11.12 How to Present This Project (Talking Points)",
+  "replace": [
+    [
+      "## 11. How Everything Works — Full Explanation for Presentation",
+      "## 11. How Everything Works"
+    ],
+    [
+      "Index 0 always holds the minimum-cost node; O(log n) insert;",
+      "Index 0 always holds the minimum-cost node; binary search finds the insert position (the insert itself is O(n) because entries shift, negligible at 68 nodes);"
+    ],
+    [
+      "**File:** `BfsAnalyser.cs`",
+      "**File:** `BfsAnalyzer.cs` (class `BfsAnalyser`)"
+    ]
+  ]
+}

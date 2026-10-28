@@ -30,9 +30,22 @@ set `"hidden": true`.
 | `github`    |     | Link to the code |
 | `liveUrl`   |     | Link to the live website |
 | `playUrl`   |     | Link to a playable build (e.g. itch.io) — adds a **Play** button |
-| `videoUrl`  |     | YouTube or Vimeo link — embeds a video in the popup |
+| `videoUrl`  |     | YouTube, Vimeo or Google Drive link — embeds a video in the popup (Drive files must be shared "Anyone with the link") |
+| `docsUrl`   |     | Link to project documentation — adds a **Documentation** button |
 | `hidden`    |     | `true` hides the project |
 
 Keep images under ~500 KB each (1600px wide is plenty) so the site stays fast.
 
 Projects added through `/admin` still work and are shown alongside these.
+
+## Documentation pages
+
+A project can have a full documentation page on the site. Put the Markdown in the
+project folder (`documentation.md`) plus a `docs.json` with the page title, links
+etc. (see `emergency-response-routing/`), then run:
+
+```bash
+node scripts/md2doc.cjs projects/<name>/documentation.md public/docs/<name>/index.html projects/<name>/docs.json
+```
+
+and set `"docsUrl": "/docs/<name>/"` in `project.json`. Mermaid diagrams are supported.

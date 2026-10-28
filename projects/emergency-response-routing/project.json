@@ -1,0 +1,24 @@
+{
+  "hidden": true,
+  "order": 0.6,
+  "title": "Emergency Response Routing",
+  "type": "game",
+  "category": "VR / Algorithms",
+  "tech": "Unity 6 · C# · Meta Quest 3",
+  "year": "2026",
+  "color": "#f87171",
+  "desc": "A Meta Quest 3 app where you pick a dispatch station and an incident in a 68-intersection city, then watch BFS, Dijkstra and A* search for the route step by step.",
+  "features": [
+    "Compare BFS (fewest roads), Dijkstra (fastest route) and A* (fastest route, guided by a heuristic) on the same start and end",
+    "Every visited intersection lights up as the search spreads, with a speed slider to slow it down",
+    "Info bar shows path length and how many nodes each algorithm had to visit",
+    "Point-and-trigger controls, spatial sound generated in code, and the whole UI built at runtime"
+  ],
+  "challenge": "Dijkstra and A* froze once travel costs got large: float keys in the SortedList priority queue lost precision, so the tie-breaker stopped making keys unique. Switching the keys to double plus a tiny insertion counter fixed it.",
+  "stack": ["Unity 6", "C#", "Meta XR SDK", "A*", "Dijkstra", "BFS", "Graphs"],
+  "github": "",
+  "liveUrl": "",
+  "playUrl": "",
+  "videoUrl": "https://drive.google.com/file/d/19SyZYZIdLdYtPtzH7e8FB-aUhU0nC4Vl/view",
+  "docsUrl": "/docs/emergency-response-routing/"
+}

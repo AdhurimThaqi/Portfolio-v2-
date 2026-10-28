@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Emergency Response Routing — Documentation | Adhurim Thaqi</title>
+<meta name="description" content="Project documentation for Emergency Response Routing, a Meta Quest 3 VR app by Adhurim Thaqi that visualises BFS, Dijkstra and A* pathfinding on a city road graph." />
+<link rel="canonical" href="https://adhurim.ch/docs/emergency-response-routing/" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Emergency Response Routing — Documentation" />
+<meta property="og:description" content="Project documentation for Emergency Response Routing, a Meta Quest 3 VR app by Adhurim Thaqi that visualises BFS, Dijkstra and A* pathfinding on a city road graph." />
+<meta property="og:url" content="https://adhurim.ch/docs/emergency-response-routing/" />
+<meta property="og:image" content="https://adhurim.ch/og-image.png" />
+<meta name="theme-color" content="#05050a" />
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Emergency Response Routing — Project Documentation","description":"Project documentation for Emergency Response Routing, a Meta Quest 3 VR app by Adhurim Thaqi that visualises BFS, Dijkstra and A* pathfinding on a city road graph.","url":"https://adhurim.ch/docs/emergency-response-routing/","author":{"@type":"Person","name":"Adhurim Thaqi","url":"https://adhurim.ch/"},"about":["Pathfinding","A*","Dijkstra","Breadth-first search","Unity","Meta Quest 3","Virtual reality"]}</script>
+<style>
+:root{--bg:#05050a;--panel:rgba(255,255,255,.035);--line:rgba(255,255,255,.08);--ink:#e8edf5;--dim:rgba(255,255,255,.58);--cyan:#22d3ee;--violet:#c084fc;--accent:#f87171}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 Outfit,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.hero{border-bottom:1px solid var(--line);background:radial-gradient(ellipse 70% 120% at 20% 0%,rgba(34,211,238,.10),transparent 60%),radial-gradient(ellipse 60% 120% at 90% 10%,rgba(192,132,252,.10),transparent 60%)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.brand{font:800 20px Syne,sans-serif;text-decoration:none;color:var(--ink)}.brand b{color:var(--cyan)}
+.back{color:var(--dim);text-decoration:none;font-size:14px}.back:hover{color:var(--cyan)}
+.hero-body{padding:36px 0 44px}
+.kicker{color:var(--accent);font-size:12px;letter-spacing:4px;text-transform:uppercase;font-weight:600}
+h1{font:800 clamp(2rem,5vw,3.4rem)/1.05 Syne,sans-serif;margin:12px 0 14px;background:linear-gradient(135deg,#fff 30%,#a5f3fc 65%,#e879f9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--dim);font-size:18px;max-width:720px;margin:0 0 20px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.meta span{padding:4px 12px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-size:13px;color:var(--dim)}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:99px;border:1px solid rgba(34,211,238,.35);background:rgba(34,211,238,.08);color:#a5f3fc;text-decoration:none;font-weight:600;font-size:14px}
+.btn.primary{background:linear-gradient(135deg,#22d3ee,#a78bfa);color:#05121a;border:none}
+.btn:hover{filter:brightness(1.15)}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px;padding:40px 0 100px}
+nav.toc{position:sticky;top:24px;align-self:start;font-size:14px}
+nav.toc .label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+nav.toc a{display:block;padding:5px 0 5px 14px;color:var(--dim);text-decoration:none;margin-left:-1px;border-left:1px solid transparent}
+nav.toc a:hover,nav.toc a.on{color:var(--ink);border-left-color:var(--cyan)}
+article{min-width:0}
+article h2{font:800 1.7rem/1.2 Syne,sans-serif;margin:64px 0 18px;padding-top:28px;border-top:1px solid var(--line)}
+article h2:first-child{margin-top:0;padding-top:0;border-top:0}
+article h3{font:700 1.2rem/1.3 Syne,sans-serif;margin:36px 0 10px;color:#fff}
+article h4{margin:24px 0 8px}
+article p,article li{color:rgba(255,255,255,.78)}
+article strong{color:#fff;font-weight:600}
+code{font:500 .86em 'JetBrains Mono',ui-monospace,monospace;background:rgba(34,211,238,.08);color:#a5f3fc;padding:.12em .4em;border-radius:6px}
+pre.code{background:#0a0a14;border:1px solid var(--line);border-radius:14px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.55}
+pre.code code{background:none;padding:0;color:#d6e2f0}
+.table{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin:18px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th{background:rgba(34,211,238,.06);color:#fff;text-align:left;font-weight:600}
+th,td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+figure.diagram{margin:20px 0;padding:20px;background:#fff;color:#1f2937;border-radius:16px;overflow-x:auto}
+figure.diagram p,figure.diagram span,figure.diagram div{color:#1f2937}
+figure.diagram pre.mermaid{margin:0;display:flex;justify-content:center;color:#05050a;background:none}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--dim);font-size:14px}
+@media(max-width:900px){.layout{grid-template-columns:1fr;gap:0}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <div class="top"><a class="brand" href="/"><b>A</b>T</a><a class="back" href="/#projects">← Back to portfolio</a></div>
+  <div class="hero-body">
+    <div class="kicker">VR · Algorithms & Data Structures · HSLU</div>
+    <h1>Emergency Response Routing</h1>
+    <p class="lead">A Meta Quest 3 app that routes ambulances through a 68-intersection city and lets you watch BFS, Dijkstra and A* search for the route, step by step, in VR.</p>
+    <div class="meta"><span>Unity 6</span><span>Meta Quest 3</span><span>C#</span><span>BFS · Dijkstra · A*</span><span>ADCREA · FS 2026</span></div>
+    <div class="btns"><a class="btn primary" href="https://drive.google.com/file/d/19SyZYZIdLdYtPtzH7e8FB-aUhU0nC4Vl/view" target="_blank" rel="noreferrer">▶ Watch the demo video</a><a class="btn" href="/docs/emergency-response-routing/Emergency_Response_Routing_Documentation.pdf">⬇ Download PDF (15 pages)</a><a class="btn" href="/#projects">All projects</a></div>
+  </div>
+</div></header>
+<div class="wrap layout">
+  <nav class="toc" aria-label="Contents"><div class="label">Contents</div><ol><li><a href="#1-project-overview">1. Project Overview</a></li><li><a href="#2-data-structures-used">2. Data Structures Used</a></li><li><a href="#3-algorithms-used">3. Algorithms Used</a></li><li><a href="#4-scene-object-hierarchy-and-components">4. Scene Object Hierarchy and Components</a></li><li><a href="#5-class-diagram">5. Class Diagram</a></li><li><a href="#6-application-state-machine">6. Application State Machine</a></li><li><a href="#7-algorithm-execution-flow">7. Algorithm Execution Flow</a></li><li><a href="#8-vr-input-flow">8. VR Input Flow</a></li><li><a href="#9-glossary-terms-shown-in-the-vr-info-bar-and-unity-console">9. Glossary — Terms Shown in the VR Info Bar and Unity Console</a></li><li><a href="#10-key-design-decisions">10. Key Design Decisions</a></li><li><a href="#11-how-everything-works">11. How Everything Works</a></li></ol></nav>
+  <article>
+<h2 id="1-project-overview">1. Project Overview</h2>
+<p><strong>Concept:</strong> A VR demonstrator running on Meta Quest that simulates an emergency dispatch system routing ambulances through a city road network. The player selects a start node (dispatch station) and an end node (incident location), then watches three different pathfinding algorithms search for the optimal route in real time.</p>
+<p><strong>Why this data story:</strong> Emergency routing is a canonical, high-stakes graph problem. Speed of route calculation directly affects life-or-death outcomes, making the comparison between BFS (fewest hops), Dijkstra (minimum travel time), and A* (heuristic-guided minimum time) immediately meaningful to any observer.</p>
+<p><strong>Platform:</strong> Unity 6 (6000.0.56f1), Meta Quest 3, C# scripting only.</p>
+<h2 id="2-data-structures-used">2. Data Structures Used</h2>
+<p>The project uses <strong>six distinct data structures</strong>, each chosen for a specific reason:</p>
+<div class="table"><table><thead><tr><th>#</th><th>Structure</th><th>Where used</th><th>Why chosen</th></tr></thead><tbody><tr><td>1</td><td><code>Dictionary&lt;int, List&lt;GraphEdge&gt;&gt;</code></td><td><code>CityGraph.adjacencyList</code></td><td>O(1) lookup by node ID; adjacency list representation is memory-efficient for sparse graphs</td></tr><tr><td>2</td><td><code>Dictionary&lt;int, GraphNode&gt;</code></td><td><code>CityGraph.nodeData</code></td><td>Decouples topology from metadata; traversal never loads positions unless needed</td></tr><tr><td>3</td><td><code>List&lt;int&gt;</code></td><td><code>PathfindingResult.path</code>, <code>PathfindingResult.visitedOrder</code></td><td>Ordered sequence required for both path reconstruction and step-by-step animation</td></tr><tr><td>4</td><td><code>Queue&lt;int&gt;</code></td><td><code>BfsAnalyser.frontier</code></td><td>FIFO guarantee ensures BFS processes nodes level-by-level, finding minimum hops first</td></tr><tr><td>5</td><td><code>Stack&lt;int&gt;</code></td><td><code>PathfindingService.ReconstructPath</code>, <code>BfsAnalyser.ReconstructPath</code></td><td><code>cameFrom</code> produces path in reverse; push then pop naturally reverses it without array reversal</td></tr><tr><td>6</td><td><code>SortedList&lt;double, int&gt;</code></td><td><code>PathfindingService</code> (Dijkstra and A* frontiers)</td><td>Index 0 always holds the minimum-cost node; binary search finds the insert position (the insert itself is O(n) because entries shift, negligible at 68 nodes); <code>double</code> key avoids float precision freeze at high cost values</td></tr><tr><td>+</td><td><code>HashSet&lt;int&gt;</code></td><td>Dijkstra settled set, A* closed set, BFS visited set, edge deduplication</td><td>O(1) contains-check; prevents re-processing already-settled nodes</td></tr></tbody></table></div>
+<h2 id="3-algorithms-used">3. Algorithms Used</h2>
+<h3 id="3-1-breadth-first-search-bfs">3.1 Breadth First Search (BFS)</h3>
+<p><strong>File:</strong> <code>BfsAnalyzer.cs</code> (class <code>BfsAnalyser</code>) <strong>Purpose:</strong> Finds the path with the fewest road segments (hops) between two nodes. <strong>Why BFS here:</strong> A FIFO <code>Queue</code> guarantees that the first time the destination is dequeued, it was reached via the minimum number of edges. Edge weights are irrelevant — two slow roads beat one fast highway. This makes BFS visually distinct from Dijkstra: the search wave expands in concentric rings, ignoring the cost of each road.</p>
+<h3 id="3-2-dijkstra-s-algorithm">3.2 Dijkstra's Algorithm</h3>
+<p><strong>File:</strong> <code>PathfindingService.RunDijkstra</code> <strong>Purpose:</strong> Finds the route with the minimum total travel time (edge weights in seconds). <strong>Why Dijkstra here:</strong> Explores all nodes in order of cumulative cost from the start. Guaranteed optimal but explores many unnecessary nodes — the amber frontier visibly fills large portions of the grid before reaching the goal, demonstrating why a heuristic helps.</p>
+<h3 id="3-3-a-algorithm">3.3 A* Algorithm</h3>
+<p><strong>File:</strong> <code>PathfindingService.RunAStar</code> <strong>Purpose:</strong> Finds the minimum travel-time route using a geographic heuristic to focus the search. **Why A* here:** Extends Dijkstra with <code>h(n) = Euclidean distance / max road speed</code>, which estimates the minimum remaining travel time. Because <code>h(n)</code> never overestimates (admissible), the result is still optimal. The directional bias means A* skips whole quadrants that Dijkstra must settle, making the visual contrast between the two algorithms the central teaching moment of the project.</p>
+<p><strong>Heuristic calibration:</strong> <code>maxRoadSpeedMetresPerSecond = 0.08</code> is derived from the tightest edge ratio in the graph (<code>sqrt(2) / 18s ≈ 0.079</code>), so <code>h(n)</code> is always slightly below true cost — admissible by construction.</p>
+<h2 id="4-scene-object-hierarchy-and-components">4. Scene Object Hierarchy and Components</h2>
+<pre class="code"><code>SampleScene
+├── DirectionalLight
+├── Global Volume
+├── OVRCameraRig                          (Meta XR SDK prefab)
+│   ├── OVRManager                        (XR runtime, OVRInput)
+│   ├── TrackingSpace
+│   │   ├── LeftHandAnchor
+│   │   ├── RightHandAnchor               (controllerTransform source)
+│   │   │   └── OVRHand (right)
+│   │   └── CenterEyeAnchor
+│   └── ...
+├── PassThrough                           (Quest passthrough / mixed reality)
+├── SystemRoot                            (all game logic lives here)
+│   ├── GameBootstrapper                  (builds CityGraph in Awake)
+│   ├── CityGraphFactory                  (constructs the 68-node graph)
+│   ├── GraphVisualizer                   (spawns node spheres + edge lines)
+│   ├── VRSceneBuilder                    (builds all UI at runtime)
+│   ├── VRAlgorithmController             (drives algorithm selection + animation)
+│   └── VRNodeSelector                    (ray-select start and end nodes)
+│       [Added at runtime by VRSceneBuilder.Start():]
+│       ├── AudioManager
+│       └── VRPointerInteractor
+└── GraphRoot                             (anchor for graph world position)</code></pre>
+<p><strong>Runtime-created UI (Phase 1 – Menu):</strong></p>
+<pre class="code"><code>MenuUI
+├── PanelMenu (background cube)
+├── Label_SELECT ALGORITHM
+├── BtnAStar  + AlgorithmButtonWirer
+├── BtnDijkstra + AlgorithmButtonWirer
+├── BtnBFS    + AlgorithmButtonWirer
+├── BtnGo     + GoButtonWirer
+└── Label_hint</code></pre>
+<p><strong>Runtime-created UI (Phase 2 – Visualization):</strong></p>
+<pre class="code"><code>VizUI
+├── BtnReset  + ResetButtonWirer
+├── SpeedSliderTrack  (VRSlider lives on SystemRoot)
+├── SpeedSliderHandle
+├── PanelInfoBar + VRInfoBar
+└── InfoText (TextMeshPro)</code></pre>
+<h2 id="5-class-diagram">5. Class Diagram</h2>
+<figure class="diagram"><pre class="mermaid">classDiagram
+    direction TB
+
+    class GraphNode {
+        +int nodeId
+        +Vector2 position
+        +string label
+        +GraphNode(int, Vector2, string)
+    }
+
+    class GraphEdge {
+        +int sourceNodeId
+        +int targetNodeId
+        +float weight
+        +GraphEdge(int, int, float)
+    }
+
+    class CityGraph {
+        -Dictionary~int,List~GraphEdge~~ adjacencyList
+        -Dictionary~int,GraphNode~ nodeData
+        +AddNode(GraphNode)
+        +AddEdge(int, int, float)
+        +GetEdgesFrom(int) List~GraphEdge~
+        +GetNode(int) GraphNode
+        +GetAllNodeIds() IEnumerable~int~
+        +ContainsNode(int) bool
+        +NodeCount int
+    }
+
+    class PathfindingResult {
+        +List~int~ path
+        +List~int~ visitedOrder
+        +float totalCost
+        +bool pathFound
+    }
+
+    class NodeVisualState {
+        &lt;&lt;enumeration&gt;&gt;
+        Default
+        StartNode
+        EndNode
+        AlgorithmFrontier
+        AlgorithmSettled
+        PathHighlight
+        BfsCoverage
+    }
+
+    class AlgorithmMode {
+        &lt;&lt;enumeration&gt;&gt;
+        AStar
+        Dijkstra
+        BFS
+    }
+
+    class PathfindingService {
+        -float maxRoadSpeedMetresPerSecond
+        +RunDijkstra(CityGraph, int, int) PathfindingResult
+        +RunAStar(CityGraph, int, int) PathfindingResult
+        -CalculateHeuristic(GraphNode, GraphNode) float
+        -ReconstructPath(Dictionary, int, int) List~int~
+    }
+
+    class BfsAnalyser {
+        +FindPath(CityGraph, int, int) PathfindingResult
+        -ReconstructPath(CityGraph, Dictionary, int, int, PathfindingResult)
+        -GetEdgeCost(CityGraph, int, int) float
+    }
+
+    class CityGraphFactory {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +BuildGraph() CityGraph
+        -NodeName(int, int) string
+        -AddNode(CityGraph, int, Vector2, string)
+        -AddEdge(CityGraph, int, int, float)
+    }
+
+    class NodeVisualObject {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +int nodeId
+        -Renderer nodeRenderer
+        -float baseScale
+        -AudioManager audioManager
+        +Initialize(int)
+        +SetState(NodeVisualState)
+        -PulseScale() IEnumerator
+    }
+
+    class GraphVisualizer {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        -Dictionary~int,NodeVisualObject~ nodeVisuals
+        -List~LineRenderer~ edgeRenderers
+        -CityGraph graph
+        +Initialize(CityGraph)
+        +SetNodeState(int, NodeVisualState)
+        +ResetAllNodes()
+        +DestroyGraph()
+        +GetNodeWorldPosition(int) Vector3
+    }
+
+    class GameBootstrapper {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        -CityGraph cityGraph
+        -GraphVisualizer visualizer
+        -CityGraphFactory factory
+        +GetGraph() CityGraph
+        +ShowGraph()
+        +HideGraph()
+    }
+
+    class VRAlgorithmController {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +float stepDelay
+        +AlgorithmMode CurrentMode
+        +bool IsRunning
+        +string StatusMessage
+        -PathfindingService pathfindingService
+        -BfsAnalyser bfsAnalyser
+        -CityGraph cityGraph
+        +OnNodesSelected(int, int)
+        +OnGoPressed()
+        +OnResetPressed()
+        +OnAStarSelected()
+        +OnDijkstraSelected()
+        +OnBFSSelected()
+        -RunAlgorithm()
+        -AnimatePathfinding(PathfindingResult) IEnumerator
+        -AnimateBFS(PathfindingResult) IEnumerator
+    }
+
+    class VRSceneBuilder {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        -VRAlgorithmController algorithmController
+        -GameBootstrapper bootstrapper
+        -VRSlider speedSlider
+        +ShowVisualization()
+        +ShowMenu()
+        -BuildMenuUI()
+        -BuildVizUI()
+        -BuildSpeedSlider()
+    }
+
+    class VRButton {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +string buttonLabel
+        +Action OnButtonPressed
+        -Renderer buttonRenderer
+        -AudioManager audioManager
+        +OnHoverEnter()
+        +OnHoverExit()
+        +Press()
+        +SetSelected(bool)
+    }
+
+    class VRPointerInteractor {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +Transform controllerTransform
+        +float rayDistance
+        -VRButton hoveredButton
+        -OVRHand rightHand
+        +IsHoveringButton() bool
+        -HasInputSource() bool
+        -GetAimRay() Ray
+        -GetPressDown() bool
+        -UpdateHover()
+        -CheckPress()
+    }
+
+    class VRNodeSelector {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +Transform controllerTransform
+        +float rayDistance
+        -LineRenderer rayLine
+        -OVRHand rightHand
+        -VRPointerInteractor pointerInteractor
+        +ResetSelection()
+        -FireRaycast()
+        -HandleNodeSelected(int)
+    }
+
+    class VRInfoBar {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        -TextMeshPro infoText
+        -VRAlgorithmController controller
+        +SetText(TextMeshPro)
+        -GetAlgorithmName() string
+    }
+
+    class VRSlider {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +float controllerPitchOffset
+        -Transform handleTransform
+        -VRPointerInteractor pointerInteractor
+        +Initialize(GameObject, Transform, float, Action~float~)
+        -GetTriggerHeld() bool
+        -GetAimRay() Ray
+    }
+
+    class AudioManager {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +PlayNodeState(NodeVisualState, Vector3)
+        +PlayButtonPress(Vector3)
+        +PlayComplete(Vector3)
+        +StartAmbient()
+        +StopAmbient()
+        -BuildTone(float, float, float) AudioClip
+        -BuildClick(float, float) AudioClip
+        -BuildArpeggio(float, float) AudioClip
+        -BuildAmbient(float) AudioClip
+    }
+
+    class GoButtonWirer {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +Initialize(VRButton, VRAlgorithmController)
+        -OnPressed()
+    }
+
+    class ResetButtonWirer {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        +Initialize(VRButton, VRAlgorithmController)
+        -OnPressed()
+    }
+
+    class AlgorithmButtonWirer {
+        &lt;&lt;MonoBehaviour&gt;&gt;
+        -AlgorithmMode mode
+        +Initialize(VRButton, VRAlgorithmController, AlgorithmMode, VRButton[])
+        -OnPressed()
+    }
+
+    %% Data relationships
+    CityGraph *-- GraphEdge : adjacencyList
+    CityGraph *-- GraphNode : nodeData
+    CityGraphFactory ..&gt; CityGraph : creates
+    CityGraphFactory ..&gt; GraphNode : creates
+    CityGraphFactory ..&gt; GraphEdge : creates
+
+    %% Algorithm relationships
+    PathfindingService ..&gt; CityGraph : reads
+    PathfindingService ..&gt; PathfindingResult : produces
+    PathfindingService ..&gt; GraphNode : reads for heuristic
+    BfsAnalyser ..&gt; CityGraph : reads
+    BfsAnalyser ..&gt; PathfindingResult : produces
+
+    %% Visual relationships
+    GraphVisualizer *-- NodeVisualObject : nodeVisuals
+    GraphVisualizer ..&gt; CityGraph : reads structure
+    GraphVisualizer ..&gt; NodeVisualState : applies
+    NodeVisualObject ..&gt; NodeVisualState : switches colour
+    NodeVisualObject --&gt; AudioManager : plays on state change
+
+    %% Bootstrap
+    GameBootstrapper --&gt; CityGraphFactory : uses
+    GameBootstrapper --&gt; CityGraph : owns
+    GameBootstrapper --&gt; GraphVisualizer : owns
+
+    %% Controllers
+    VRAlgorithmController --&gt; PathfindingService : runs algorithms
+    VRAlgorithmController --&gt; BfsAnalyser : runs BFS
+    VRAlgorithmController --&gt; GraphVisualizer : animates nodes
+    VRAlgorithmController --&gt; VRSceneBuilder : triggers phase change
+    VRAlgorithmController --&gt; VRNodeSelector : resets on RESET
+    VRAlgorithmController --&gt; AudioManager : plays complete sound
+    VRAlgorithmController --&gt; AlgorithmMode : current selection
+
+    VRSceneBuilder --&gt; VRAlgorithmController : wires buttons to
+    VRSceneBuilder --&gt; GameBootstrapper : show/hide graph
+    VRSceneBuilder ..&gt; VRButton : creates
+    VRSceneBuilder ..&gt; VRPointerInteractor : creates (AddComponent)
+    VRSceneBuilder ..&gt; VRSlider : creates
+
+    %% VR Interaction
+    VRPointerInteractor --&gt; VRButton : hover and press
+    VRNodeSelector --&gt; VRPointerInteractor : checks button priority
+    VRNodeSelector --&gt; VRAlgorithmController : reports node pair
+    VRNodeSelector --&gt; GraphVisualizer : sets start/end colour
+    VRSlider --&gt; VRPointerInteractor : checks button priority
+
+    %% Wirer pattern
+    GoButtonWirer --&gt; VRButton : assigns OnButtonPressed
+    GoButtonWirer --&gt; VRAlgorithmController : calls OnGoPressed
+    ResetButtonWirer --&gt; VRButton : assigns OnButtonPressed
+    ResetButtonWirer --&gt; VRAlgorithmController : calls OnResetPressed
+    AlgorithmButtonWirer --&gt; VRButton : assigns OnButtonPressed
+    AlgorithmButtonWirer --&gt; VRAlgorithmController : calls OnXxxSelected
+    AlgorithmButtonWirer --&gt; AlgorithmMode : stores selected mode
+
+    %% Info
+    VRInfoBar --&gt; VRAlgorithmController : reads StatusMessage
+    VRButton --&gt; AudioManager : plays click</pre></figure>
+<h2 id="6-application-state-machine">6. Application State Machine</h2>
+<figure class="diagram"><pre class="mermaid">stateDiagram-v2
+    [*] --&gt; Awake
+    Awake --&gt; MenuPhase : GameBootstrapper builds CityGraph&lt;br/&gt;VRSceneBuilder builds menu UI
+
+    MenuPhase --&gt; MenuPhase : Player selects algorithm&lt;br/&gt;(AlgorithmButtonWirer highlights button)
+
+    MenuPhase --&gt; VisualizationPhase : Player presses GO&lt;br/&gt;MenuUI hidden, graph spawned,&lt;br/&gt;VizUI built, ambient audio starts
+
+    VisualizationPhase --&gt; SelectingStart : Initial state
+    SelectingStart --&gt; SelectingEnd : Player ray-selects start node&lt;br/&gt;(node turns blue)
+    SelectingEnd --&gt; RunningAlgorithm : Player ray-selects end node&lt;br/&gt;(node turns red, algorithm fires)
+
+    RunningAlgorithm --&gt; RunningAlgorithm : Frontier expands step by step&lt;br/&gt;(amber → teal animation)
+    RunningAlgorithm --&gt; PathFound : pathFound == true&lt;br/&gt;(path highlighted orange,&lt;br/&gt;completion arpeggio plays)
+    RunningAlgorithm --&gt; NoPath : pathFound == false
+
+    PathFound --&gt; SelectingStart : Player presses RESET
+    NoPath --&gt; SelectingStart : Player presses RESET
+    SelectingStart --&gt; SelectingStart : Player presses RESET&lt;br/&gt;(graph colours cleared)
+
+    VisualizationPhase --&gt; MenuPhase : Player presses RESET&lt;br/&gt;(VizUI destroyed, graph hidden,&lt;br/&gt;MenuUI shown, ambient stops)</pre></figure>
+<h2 id="7-algorithm-execution-flow">7. Algorithm Execution Flow</h2>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    A([Player selects start node]) --&gt; B[VRNodeSelector.HandleNodeSelected&lt;br/&gt;startNodeId stored&lt;br/&gt;graph node turns blue]
+    B --&gt; C([Player selects end node])
+    C --&gt; D[VRNodeSelector.HandleNodeSelected&lt;br/&gt;endNodeId stored&lt;br/&gt;graph node turns red]
+    D --&gt; E[VRAlgorithmController.OnNodesSelected]
+    E --&gt; F{currentMode?}
+
+    F --&gt;|AStar| G[PathfindingService.RunAStar&lt;br/&gt;SortedList open set&lt;br/&gt;Dictionary gCost + cameFrom&lt;br/&gt;HashSet closedSet]
+    F --&gt;|Dijkstra| H[PathfindingService.RunDijkstra&lt;br/&gt;SortedList frontier&lt;br/&gt;Dictionary distances + cameFrom&lt;br/&gt;HashSet settled]
+    F --&gt;|BFS| I[BfsAnalyser.FindPath&lt;br/&gt;Queue frontier&lt;br/&gt;Dictionary cameFrom&lt;br/&gt;HashSet visited]
+
+    G --&gt; J[PathfindingResult returned&lt;br/&gt;path List + visitedOrder List]
+    H --&gt; J
+    I --&gt; J
+
+    J --&gt; K[AnimatePathfinding / AnimateBFS coroutine]
+    K --&gt; L[foreach visitedOrder:&lt;br/&gt;SetNodeState AlgorithmFrontier&lt;br/&gt;wait stepDelay&lt;br/&gt;SetNodeState AlgorithmSettled]
+    L --&gt; M{pathFound?}
+    M --&gt;|Yes| N[foreach path:&lt;br/&gt;SetNodeState PathHighlight&lt;br/&gt;PlayComplete audio]
+    M --&gt;|No| O[InfoBar shows No path found]
+    N --&gt; P([Player presses RESET])
+    O --&gt; P
+    P --&gt; Q[VRAlgorithmController.OnResetPressed&lt;br/&gt;StopAllCoroutines&lt;br/&gt;VRSceneBuilder.ShowMenu]</pre></figure>
+<h2 id="8-vr-input-flow">8. VR Input Flow</h2>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    A([Each frame Update]) --&gt; B[VRPointerInteractor]
+    A --&gt; C[VRNodeSelector]
+
+    B --&gt; D{OVRCameraRig&lt;br/&gt;found?}
+    D --&gt;|No| E[Skip frame]
+    D --&gt;|Yes| F[Cast ray from&lt;br/&gt;rightControllerAnchor&lt;br/&gt;with pitch offset]
+    F --&gt; G{Ray hits&lt;br/&gt;VRButton collider?}
+    G --&gt;|Yes| H[OnHoverEnter&lt;br/&gt;button brightens]
+    G --&gt;|No| I[Previous button&lt;br/&gt;OnHoverExit]
+    H --&gt; J{Trigger pressed&lt;br/&gt;OVRInput.GetDown?}
+    J --&gt;|Yes| K[VRButton.Press&lt;br/&gt;audio + color flash&lt;br/&gt;OnButtonPressed callback]
+
+    C --&gt; L{IsHoveringButton?}
+    L --&gt;|Yes| M[Skip node raycast&lt;br/&gt;button has priority]
+    L --&gt;|No| N[Cast ray from controller]
+    N --&gt; O{Hits NodeVisualObject?}
+    O --&gt;|Yes| P[HandleNodeSelected&lt;br/&gt;start or end node]
+    O --&gt;|No| Q[No action]</pre></figure>
+<h2 id="9-glossary-terms-shown-in-the-vr-info-bar-and-unity-console">9. Glossary — Terms Shown in the VR Info Bar and Unity Console</h2>
+<h3 id="edge-weight">Edge Weight</h3>
+<p>Every road segment (GraphEdge) has a <code>weight</code> field representing <strong>travel time in seconds</strong>. The graph uses three weight values:</p>
+<div class="table"><table><thead><tr><th>Road type</th><th>Weight</th><th>Why</th></tr></thead><tbody><tr><td>Horizontal grid road</td><td>30 s</td><td>Standard city block</td></tr><tr><td>Vertical grid road</td><td>35 s</td><td>Slightly longer blocks</td></tr><tr><td>Hub shortcut</td><td>18 s</td><td>Express connector between quadrants</td></tr></tbody></table></div>
+<p>Dijkstra and A* minimise the <strong>sum of weights</strong> along the route — the fastest journey by time. BFS ignores weights entirely and instead minimises the number of road segments (hops).</p>
+<h3 id="visited-nodes">Visited Nodes</h3>
+<p>The <strong>visited / explored count</strong> is how many intersections the algorithm <em>opened and inspected</em> during its search — this is almost always larger than the final route.</p>
+<p>Example: to find a 6-node path, Dijkstra might visit 44 of the 68 nodes, while A* visits only 18, because A* uses the heuristic to ignore irrelevant directions. The ratio <code>Visited: 18/68</code> shows algorithmic efficiency — a key comparison point in the demo.</p>
+<h3 id="path-nodes-vs-hops">Path Nodes vs Hops</h3>
+<ul><li><strong>Path nodes</strong> — the number of <em>intersections</em> in the found route, including start and end.</li><li><strong>Hops</strong> — the number of <em>road segments</em> connecting those intersections. Always <code>path nodes − 1</code>.</li></ul>
+<p>Example: Start → A → B → C → End = <strong>5 nodes</strong>, <strong>4 hops</strong>.</p>
+<h3 id="why-bfs-shows-a-weight">Why BFS Shows a Weight</h3>
+<p>BFS finds the route with the <strong>fewest hops</strong>, not the lowest travel time. However, once that hop-minimal route is found, its total travel time is calculated afterwards by summing the edge weights along it. This weight is displayed purely for <strong>comparison purposes</strong>:</p>
+<pre class="code"><code>[BFS]   Path: 7 nodes   Hops: 6   Visited: 35/68   Weight: 195 s
+[A*]    Path: 9 nodes   Visited: 18/68              Weight: 160 s</code></pre>
+<p>The same start/end pair: BFS uses 6 road segments but takes 195 s. A* uses 8 road segments but takes only 160 s because it chose faster roads. This contrast is the central teaching moment of the project.</p>
+<h3 id="full-console-output-reference">Full Console Output Reference</h3>
+<div class="table"><table><thead><tr><th>Message</th><th>When it appears</th><th>What it means</th></tr></thead><tbody><tr><td><code>Graph data built: 68 nodes</code></td><td>App start (Awake)</td><td>CityGraph constructed with 64 grid nodes + 4 hub nodes</td></tr><tr><td><code>GraphVisualiser: spawned 68 nodes</code></td><td>GO pressed</td><td>All sphere GameObjects created and placed</td></tr><tr><td><code>Start node: 12 — select end node</code></td><td>Player selects first node</td><td>Node 12 is the dispatch origin; waiting for destination</td></tr><tr><td><code>End node: 55 — running algorithm</code></td><td>Player selects second node</td><td>Destination chosen, algorithm fires immediately</td></tr><tr><td><code>[AStar] Path: 9 nodes   Visited: 18/68</code></td><td>A* finishes</td><td>9-node route, only 18 nodes explored</td></tr><tr><td><code>[Dijkstra] Path: 9 nodes   Visited: 44/68</code></td><td>Dijkstra finishes</td><td>Same optimal route but explored 44 nodes — no heuristic</td></tr><tr><td><code>[BFS] Hops: 6   Covered: 35/68</code></td><td>BFS finishes</td><td>6-segment path (7 nodes), 35 nodes expanded</td></tr><tr><td><code>No path found</code></td><td>Algorithm finishes with no route</td><td>Start and end are in disconnected parts of the graph</td></tr><tr><td><code>Reset to menu</code></td><td>Player presses RESET</td><td>All coroutines stopped, graph hidden, menu restored</td></tr><tr><td><code>VRAlgorithmController ready</code></td><td>App start (Start)</td><td>Controller initialised, pathfinding services ready</td></tr><tr><td><code>[VRPointerInteractor] OVRCameraRig not found</code></td><td>Error — rig missing</td><td>OVRCameraRig prefab is not in the scene hierarchy</td></tr></tbody></table></div>
+<h3 id="info-bar-live-display-vr-headset-bottom-of-graph">Info Bar Live Display (VR headset, bottom of graph)</h3>
+<p><strong>During search:</strong></p>
+<pre class="code"><code>A* heuristic shortest path
+Searching...   Visited: 12 / 68</code></pre>
+<p>**After A* or Dijkstra completes:**</p>
+<pre class="code"><code>A* heuristic shortest path
+Path: 9 nodes   Visited: 18 / 68</code></pre>
+<p><strong>After BFS completes:</strong></p>
+<pre class="code"><code>BFS fewest hops path
+Path: 7 nodes   Hops: 6   Visited: 35 / 68</code></pre>
+<p><code>Hops</code> is shown only for BFS because that is the metric BFS optimises — it makes explicit that BFS found the shortest path <em>by segment count</em>, not by time.</p>
+<p><strong>No path:</strong></p>
+<pre class="code"><code>No path found.   Press RESET</code></pre>
+<h2 id="10-key-design-decisions">10. Key Design Decisions</h2>
+<p><strong>Wirer pattern (GoButtonWirer, ResetButtonWirer, AlgorithmButtonWirer):</strong> Lambda expressions are forbidden by the project rules. Instead of assigning <code>button.OnButtonPressed = () =&gt; { controller.OnGoPressed(); }</code>, each button gets its own small MonoBehaviour that holds references and a named <code>OnPressed()</code> method. This keeps <code>System.Action</code> delegates usable without lambdas.</p>
+<p>**SortedList with double keys (Dijkstra and A*):** Float cost values above ~84 seconds cause the float unit of least precision (ULP) to swallow any tiebreaker offset, turning a while loop into an infinite loop. Switching the key to <code>double</code> (ULP ~1e-12 at 10000s) and appending a tiny <code>insertSeq * 1e-9</code> suffix makes every key unique without collisions.</p>
+<p><strong>Procedural audio (AudioManager):</strong> All sound clips are generated from sine waves and noise at startup. No external audio assets are needed, keeping the project fully self-contained.</p>
+<p><strong>Two-phase scene (Menu / Visualization):</strong> <code>VRSceneBuilder</code> manages <code>menuRoot</code> and <code>vizRoot</code> GameObjects. <code>SetActive(false)</code> on <code>menuRoot</code> hides all menu objects in one call; <code>Destroy(vizRoot)</code> tears down the graph UI cleanly on RESET. This avoids a multi-scene setup while keeping the two phases completely isolated.</p>
+<h2 id="11-how-everything-works">11. How Everything Works</h2>
+<h3 id="11-1-what-happens-when-the-app-starts">11.1 What Happens When the App Starts</h3>
+<p>When you launch the app on the Quest, three things happen in order before you see anything:</p>
+<ol><li><strong><code>GameBootstrapper.Awake()</code></strong> runs first (before any <code>Start()</code>). It calls <code>CityGraphFactory.BuildGraph()</code> which constructs the entire road network purely in memory — no visual yet, just data. The result is a <code>CityGraph</code> object holding 68 nodes and their connections.</li></ol>
+<ol><li><strong><code>VRSceneBuilder.Start()</code></strong> runs next. It adds <code>AudioManager</code> and <code>VRPointerInteractor</code> as components at runtime, then calls <code>BuildMenuUI()</code> which spawns the background panel, the three algorithm buttons, and the GO button as real Unity <code>GameObject</code> cubes with <code>BoxCollider</code> triggers on them. All of this is parented under a single <code>menuRoot</code> object.</li></ol>
+<ol><li>The app is now in <strong>Phase 1 (Menu)</strong>. You see the SELECT ALGORITHM panel floating in front of you. A* is pre-selected (highlighted blue) by default.</li></ol>
+<h3 id="11-2-the-road-network-what-citygraph-actually-is">11.2 The Road Network — What CityGraph Actually Is</h3>
+<p>The city is represented as a <strong>graph</strong> — a mathematical structure of nodes (intersections) and edges (roads between them).</p>
+<ul><li><strong>68 nodes total</strong>: 64 form an 8×8 grid of street intersections, plus 4 "hub" nodes — one in each quadrant of the city acting as express shortcuts</li><li><strong>Edges</strong> connect adjacent nodes. Every edge stores a <code>weight</code> — the travel time in seconds:</li><li>Horizontal roads: <strong>30 seconds</strong></li><li>Vertical roads: <strong>35 seconds</strong></li><li>Hub shortcuts: <strong>18 seconds</strong> (faster because hubs connect diagonally across a block)</li><li>All roads are <strong>bidirectional</strong> — you can travel either direction on any road</li></ul>
+<p>The graph is stored as an <strong>adjacency list</strong> (<code>Dictionary&lt;int, List&lt;GraphEdge&gt;&gt;</code>). Each node ID maps to a list of edges leaving it. This is the most efficient structure for a sparse graph where each intersection connects to only 3–5 roads — a full grid matrix would waste memory storing thousands of zeroes.</p>
+<h3 id="11-3-phase-1-algorithm-selection-how-the-buttons-work">11.3 Phase 1 — Algorithm Selection (How the Buttons Work)</h3>
+<p>When you point the cyan ray at a button and pull the trigger:</p>
+<ol><li><code>VRPointerInteractor</code> casts a ray from the right controller every frame using <code>Physics.Raycast</code>. If the ray hits a <code>BoxCollider</code> that has a <code>VRButton</code> component, it calls <code>OnHoverEnter()</code> — the button brightens.</li><li>When you pull the trigger, <code>OVRInput.GetDown(PrimaryIndexTrigger)</code> returns true and <code>VRButton.Press()</code> fires.</li><li><code>Press()</code> plays a click sound, flashes the button dark briefly, then invokes <code>OnButtonPressed</code> — a <code>System.Action</code> delegate.</li><li>That delegate points to a method inside <code>AlgorithmButtonWirer.OnPressed()</code>, which tells <code>VRAlgorithmController</code> which algorithm was chosen and highlights that button blue.</li></ol>
+<p><strong>Why the wirer classes exist:</strong> The brief forbids lambda expressions. Without lambdas you cannot write <code>button.OnButtonPressed = () =&gt; controller.OnAStarSelected()</code> inline. Instead, each button gets its own small MonoBehaviour (<code>AlgorithmButtonWirer</code>, <code>GoButtonWirer</code>, <code>ResetButtonWirer</code>) that stores the references and provides a named <code>OnPressed()</code> method.</p>
+<p>Pressing <strong>GO</strong> calls <code>VRAlgorithmController.OnGoPressed()</code>, which switches the app to Phase 2.</p>
+<h3 id="11-4-phase-2-visualization-what-changes-on-go">11.4 Phase 2 — Visualization (What Changes on GO)</h3>
+<p><code>VRSceneBuilder.ShowVisualization()</code> does four things:</p>
+<ol><li>Hides <code>menuRoot</code> entirely with <code>SetActive(false)</code></li><li>Calls <code>GameBootstrapper.ShowGraph()</code> → <code>GraphVisualizer.Initialize(cityGraph)</code> — this spawns 68 sphere GameObjects (one per node) and 112+ <code>LineRenderer</code> objects (one per road segment)</li><li>Builds <code>vizRoot</code> with the RESET button, speed slider, and info bar</li><li>Starts the ambient background sound</li></ol>
+<p>The graph spawns with a short animation: edges fade in first, then node spheres scale up one by one from node 0 to node 67. This is purely visual — the graph data was already built in Awake.</p>
+<h3 id="11-5-node-selection-how-you-pick-start-and-end">11.5 Node Selection — How You Pick Start and End</h3>
+<p><code>VRNodeSelector</code> runs its own ray every frame independently from <code>VRPointerInteractor</code>. When you pull the trigger:</p>
+<ol><li>It first checks <code>pointerInteractor.IsHoveringButton()</code> — if you are pointing at a UI button, the node raycast is suppressed. Buttons always have priority.</li><li>If you are pointing at the graph, <code>Physics.Raycast</code> checks if the hit object has a <code>NodeVisualObject</code> component.</li><li><strong>First trigger pull</strong> = start node. It turns blue, <code>startNodeId</code> is stored. The info bar shows "Select end node."</li><li><strong>Second trigger pull</strong> = end node. It turns red. <code>OnNodesSelected(start, end)</code> is immediately called on <code>VRAlgorithmController</code>, which fires the selected algorithm.</li></ol>
+<h3 id="11-6-bfs-breadth-first-search-explained">11.6 BFS — Breadth First Search Explained</h3>
+<p><strong>The question it answers:</strong> What is the route with the <strong>fewest road segments</strong> (hops) from A to B?</p>
+<p><strong>How it works, step by step:</strong></p>
+<p>BFS uses a <code>Queue&lt;int&gt;</code> — a first-in, first-out line of node IDs to process next.</p>
+<pre class="code"><code>Start at node S. Add S to the Queue and mark it visited.
+
+Loop:
+  Take the first node from the Queue (call it C).
+  If C is the destination → done, path found.
+  Otherwise: look at every road leaving C.
+    For each neighbour N that has NOT been visited:
+      Mark N visited.
+      Record "I came from C" in the cameFrom Dictionary.
+      Add N to the back of the Queue.</code></pre>
+<p>Because the Queue is FIFO, BFS always processes all nodes <strong>1 hop away</strong> before any node <strong>2 hops away</strong>, then all 2-hop nodes before any 3-hop nodes. This layered expansion guarantees that the first time you reach the destination, you reached it via the minimum possible number of road segments.</p>
+<p><strong>What you see in the headset:</strong> The green wave expanding outward in rings — all immediate neighbours of the start colour green, then their neighbours, then theirs. The wave stops when it reaches the red destination node.</p>
+<p><strong>The key limitation of BFS:</strong> It treats every road as equal. A 30-second road and an 18-second shortcut are the same to BFS — it counts them both as "one hop." This is why the BFS path can take more total time than the Dijkstra path even though it uses fewer roads.</p>
+<h3 id="11-7-dijkstra-s-algorithm-explained">11.7 Dijkstra's Algorithm Explained</h3>
+<p><strong>The question it answers:</strong> What is the route with the <strong>lowest total travel time</strong> from A to B?</p>
+<p><strong>How it works, step by step:</strong></p>
+<p>Dijkstra uses a <code>SortedList&lt;double, int&gt;</code> as a priority queue — the node with the lowest cumulative travel time from the start is always at index 0, processed next.</p>
+<pre class="code"><code>Assign distance = 0 to start node S.
+Assign distance = infinity to all other nodes.
+Add S to the priority queue.
+
+Loop:
+  Take the node C with the smallest known distance from the queue.
+  If C is already settled (processed before) → skip it (stale entry).
+  Mark C as settled.
+
+  For each road leaving C to neighbour N:
+    tentative = distance[C] + road_weight
+    If tentative &lt; distance[N]:
+      Update distance[N] = tentative
+      Record "came from C" for node N
+      Add N to the priority queue with key = tentative</code></pre>
+<p>The <code>HashSet&lt;int&gt; settled</code> prevents re-processing nodes. Once a node is settled, we have found the true shortest time to it — any future queue entry for that node is outdated and skipped.</p>
+<p><strong>What you see in the headset:</strong> The amber frontier expands outward unevenly, following cheap (fast) roads further before slow ones. The teal settled nodes fill a large portion of the grid — Dijkstra must explore in all directions because it has no idea where the destination is.</p>
+<p><strong>Why the double key instead of float:</strong> When travel times exceed ~84 seconds, the float ULP (unit of least precision) is too coarse to represent a tiny tiebreaker suffix. Two entries with the same rounded float key would cause a <code>SortedList</code> key collision and throw an exception. Using <code>double</code> (which has ~1000x more precision) and adding <code>insertSeq × 1e-9</code> as a unique suffix prevents this completely.</p>
+<h3 id="11-8-a-algorithm-explained">11.8 A* Algorithm Explained</h3>
+<p><strong>The question it answers:</strong> What is the route with the lowest total travel time — but found <strong>much faster</strong> than Dijkstra by focusing the search toward the destination?</p>
+<p><strong>How it works:</strong></p>
+<p>A* is Dijkstra with one addition: a <strong>heuristic</strong> <code>h(n)</code>. For every node being considered, A* calculates:</p>
+<pre class="code"><code>f(n) = g(n) + h(n)</code></pre>
+<ul><li><code>g(n)</code> = the actual travel time from the start to node n (same as Dijkstra's distance)</li><li><code>h(n)</code> = an <em>estimate</em> of the remaining travel time from n to the destination</li></ul>
+<p>The priority queue sorts by <code>f(n)</code> instead of just <code>g(n)</code>. Nodes that are both cheap to reach <em>and</em> close to the goal are explored first.</p>
+<p><strong>The heuristic formula:</strong></p>
+<pre class="code"><code>h(n) = Euclidean distance from n to destination / 0.08</code></pre>
+<p><code>0.08</code> is the maximum road speed in the graph (derived from the fastest edge: hub shortcut spans <code>√2</code> coordinate units in 18 seconds → <code>√2/18 ≈ 0.079</code>). Dividing distance by max speed gives the <em>minimum possible</em> remaining travel time. Because this never overestimates the true cost, the heuristic is called <strong>admissible</strong> — A* is still guaranteed to find the optimal path.</p>
+<p><strong>What you see in the headset:</strong> The amber frontier is biased toward the destination. Whole sections of the grid that Dijkstra had to settle are completely skipped. The path found is identical to Dijkstra's, but far fewer nodes are coloured teal.</p>
+<p><strong>The core teaching comparison (present this side by side):</strong></p>
+<div class="table"><table><thead><tr><th>Metric</th><th>BFS</th><th>Dijkstra</th><th>A*</th></tr></thead><tbody><tr><td>Optimises for</td><td>Fewest hops</td><td>Minimum time</td><td>Minimum time</td></tr><tr><td>Uses heuristic</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Typical nodes visited (68-node graph)</td><td>~35</td><td>~44</td><td>~18</td></tr><tr><td>Result quality</td><td>Fewest segments</td><td>Optimal time</td><td>Optimal time</td></tr><tr><td>Best used when</td><td>All edges equal</td><td>Weighted graph, no coords</td><td>Weighted graph + coordinates</td></tr></tbody></table></div>
+<h3 id="11-9-path-reconstruction-how-the-route-is-traced-back">11.9 Path Reconstruction — How the Route is Traced Back</h3>
+<p>All three algorithms use a <code>Dictionary&lt;int, int&gt; cameFrom</code> — a map of "which node did I arrive from?" For each node settled, we record its predecessor.</p>
+<p>Once the destination is reached, reconstruction uses a <code>Stack&lt;int&gt;</code>:</p>
+<pre class="code"><code>Start at destination D.
+Push D onto the Stack.
+Look up cameFrom[D] → push that node.
+Repeat until we reach the start node S.
+Push S.
+
+Now pop everything off the Stack → nodes come out in order Start → ... → End.</code></pre>
+<p>The Stack naturally reverses the backwards chain without needing a separate array reversal. The final <code>List&lt;int&gt;</code> is then stored in <code>PathfindingResult.path</code>.</p>
+<h3 id="11-10-animation-how-the-step-by-step-visualization-works">11.10 Animation — How the Step-by-Step Visualization Works</h3>
+<p><code>VRAlgorithmController</code> drives the animation using a Unity <strong>Coroutine</strong> — a method that can pause mid-execution and resume next frame using <code>yield return</code>.</p>
+<pre class="code"><code>foreach (int nodeId in result.visitedOrder)
+{
+    SetNodeState(nodeId, AlgorithmFrontier);  // turn amber
+    yield return new WaitForSeconds(stepDelay);
+    SetNodeState(nodeId, AlgorithmSettled);   // turn teal
+}</code></pre>
+<p><code>visitedOrder</code> is a <code>List&lt;int&gt;</code> populated by the algorithm in the exact order nodes were settled. Replaying it with delays recreates the search expansion visually.</p>
+<p>The <strong>speed slider</strong> changes <code>stepDelay</code> between 0.01s (fast) and 0.30s (slow) in real time during playback.</p>
+<p><code>NodeVisualObject.SetState()</code> changes the sphere colour and triggers a brief scale pulse (sphere grows then shrinks back) to draw attention to each newly visited node.</p>
+<h3 id="11-11-the-audio-system">11.11 The Audio System</h3>
+<p><code>AudioManager</code> generates all sounds procedurally at app startup using sine wave math — no audio files needed in the project. Each algorithm state has a distinct tone:</p>
+<div class="table"><table><thead><tr><th>State</th><th>Frequency</th><th>What you hear</th></tr></thead><tbody><tr><td>Frontier node</td><td>440 Hz (A4)</td><td>Soft amber ping</td></tr><tr><td>Path highlight</td><td>660 Hz (E5)</td><td>Warmer orange ping</td></tr><tr><td>BFS coverage</td><td>528 Hz (C5)</td><td>Green ping</td></tr><tr><td>Start node selected</td><td>523 Hz (C5)</td><td>Confirmation tone</td></tr><tr><td>End node selected</td><td>392 Hz (G4)</td><td>Lower confirmation</td></tr><tr><td>Button press</td><td>1400 Hz noise burst</td><td>Tactile click</td></tr><tr><td>Algorithm complete</td><td>C5–E5–G5 arpeggio</td><td>Rising chord</td></tr></tbody></table></div>
+<p>All node sounds play at the <strong>world position</strong> of the node sphere so the sound appears to come from the location being processed — as the search wave spreads across the graph, the pings spread with it spatially in the headset.</p>
+  </article>
+</div>
+<footer><div class="wrap">Documentation by <a href="/">Adhurim Thaqi</a> · Semester project, ADCREA: Algorithms and Data Structures for Creative Technologies · BSc Immersive Technologies, HSLU · FS 2026</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: "default", securityLevel: "strict", fontFamily: "Outfit, sans-serif" });
+const links = [...document.querySelectorAll("nav.toc a")];
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "0px 0px -70% 0px" });
+document.querySelectorAll("article h2[id]").forEach((h) => io.observe(h));
+</script>
+</body>
+</html>
