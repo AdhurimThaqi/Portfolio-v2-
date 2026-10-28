@@ -1,0 +1,21 @@
+{
+  "order": 0,
+  "title": "SPIN — VR Table Tennis",
+  "type": "game",
+  "category": "WebXR / VR",
+  "tech": "A-Frame · WebXR",
+  "year": "2026",
+  "color": "#39e4ff",
+  "desc": "Table tennis in a night arena, playable in VR right from the browser. In a headset your controller is the paddle; on desktop you play with the mouse.",
+  "features": [
+    "Runs in the browser — VR headsets via WebXR, or desktop with mouse and keyboard",
+    "Three opponent levels: Rookie, Pro and Legend",
+    "Swing your controller as the paddle and tap menu buttons with it",
+    "Optional aim assist, live scoreboard, crowd arena and music"
+  ],
+  "stack": ["A-Frame", "WebXR", "JavaScript", "Three.js", "Web Audio", "Game Physics"],
+  "github": "https://github.com/AdhurimThaqi/WebXR-Digital_Prototype",
+  "liveUrl": "",
+  "playUrl": "https://hello-web-xr.netlify.app/pingpong",
+  "videoUrl": ""
+}

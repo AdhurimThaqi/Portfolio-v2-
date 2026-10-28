@@ -1,0 +1,21 @@
+{
+  "order": 0.5,
+  "title": "The Last Room",
+  "type": "game",
+  "category": "VR Narrative",
+  "tech": "A-Frame · WebXR · React",
+  "year": "2026",
+  "color": "#d4a64a",
+  "desc": "A short VR story: you walk through your grandparent's house one last time before it's sold. Hold the right object in each room and a memory comes back to life around you.",
+  "features": [
+    "Six scenes, from the doorstep through the hallway and kitchen to the garden",
+    "Point at the glowing object in each room and hold the trigger to unlock a memory",
+    "Rooms change when a memory unlocks: lights turn golden, people and objects reappear",
+    "Ambient sound like a ticking clock, best played with headphones"
+  ],
+  "stack": ["A-Frame", "WebXR", "JavaScript", "React", "Web Audio", "Storytelling"],
+  "github": "https://github.com/AdhurimThaqi/WebXR-Digital_Prototype",
+  "liveUrl": "",
+  "playUrl": "https://hello-web-xr.netlify.app/lastroom",
+  "videoUrl": ""
+}

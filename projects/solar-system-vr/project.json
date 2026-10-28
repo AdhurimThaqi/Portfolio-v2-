@@ -1,0 +1,21 @@
+{
+  "order": 0.7,
+  "title": "Solar System VR",
+  "type": "game",
+  "category": "WebXR / Education",
+  "tech": "A-Frame · WebXR",
+  "year": "2026",
+  "color": "#f5b544",
+  "desc": "Stand on a glowing platform in the middle of the solar system. Point your controller at a planet to learn about it, and turn around, because Saturn passes right behind you.",
+  "features": [
+    "All eight planets orbiting the Sun, plus the Moon, an asteroid belt and a passing comet",
+    "Point at a planet and pull the trigger to open an info panel",
+    "Planets grow slightly when you aim at them, with bigger hit areas so small ones are easy to pick",
+    "Runs in the browser, in a VR headset or on desktop"
+  ],
+  "stack": ["A-Frame", "WebXR", "JavaScript", "3D Scene Design", "Interaction Design"],
+  "github": "https://github.com/AdhurimThaqi/WebXR-Digital_Prototype",
+  "liveUrl": "",
+  "playUrl": "https://hello-web-xr.netlify.app/test",
+  "videoUrl": ""
+}
