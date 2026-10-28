@@ -27,3 +27,5 @@ dist-ssr
 projects/*.glb
 # Raw screen captures (cropped copies are used instead)
 projects/emergency-response-routing/cover-*.png
+# Generated at build time from projects/ (scripts/gen-projects.mjs)
+netlify/functions/lib/projects.generated.mjs
