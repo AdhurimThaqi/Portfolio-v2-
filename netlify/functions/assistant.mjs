@@ -85,7 +85,12 @@ export default async (req) => {
   if (!message) return json({ error: "Empty message" }, 400);
 
   const cfg = providerConfig();
-  if (!cfg.apiKey) return json({ reply: OFFLINE, offline: true });
+  // The public widget wants short, fast replies — allow a lighter model than the admin generator.
+  if (process.env.ASSISTANT_MODEL) cfg.model = process.env.ASSISTANT_MODEL;
+  if (!cfg.apiKey) {
+    console.error(`[assistant] no API key set for provider "${cfg.provider}"`);
+    return json({ reply: OFFLINE, offline: true, reason: "no_api_key" });
+  }
 
   if (await rateLimited(req)) {
     return json({ reply: "You've asked quite a few questions — please try again a little later, or reach Adhurim directly via the contact section." });
@@ -102,8 +107,9 @@ export default async (req) => {
     .join("\n");
   const user = `${convo ? convo + "\n" : ""}Visitor: ${message}\nAssistant:`;
 
+  // Netlify kills synchronous functions at ~10s, so abort first and reply gracefully.
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 20000);
+  const timer = setTimeout(() => controller.abort(), 9000);
   try {
     const text = await callModel(cfg, system, user, controller.signal, 400);
     clearTimeout(timer);
@@ -112,8 +118,11 @@ export default async (req) => {
   } catch (e) {
     clearTimeout(timer);
     if (e?.name === "AbortError") {
-      return json({ reply: "That took too long — please try again in a moment." });
+      console.error(`[assistant] ${cfg.provider}/${cfg.model} timed out`);
+      return json({ reply: "That took too long — please try again in a moment.", reason: "timeout" });
     }
-    return json({ reply: OFFLINE, offline: true });
+    // Surface the real cause in the function logs instead of silently masking it.
+    console.error(`[assistant] ${cfg.provider}/${cfg.model} failed:`, e?.status || e?.message || e, String(e?.detail || "").slice(0, 500));
+    return json({ reply: OFFLINE, offline: true, reason: e?.status ? `api_error_${e.status}` : "api_error" });
   }
 };
