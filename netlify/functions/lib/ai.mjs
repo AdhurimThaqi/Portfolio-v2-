@@ -8,17 +8,26 @@
 export function providerConfig() {
   const provider = (process.env.AI_PROVIDER || "anthropic").toLowerCase();
   if (provider === "openai" || provider === "openai-compatible") {
-    return {
-      provider: "openai",
-      apiKey: process.env.AI_API_KEY,
-      baseUrl: (process.env.AI_BASE_URL || "https://router.huggingface.co/v1").replace(/\/+$/, ""),
-      model: process.env.AI_MODEL || "meta-llama/Llama-3.3-70B-Instruct",
-    };
+    const baseUrl = (process.env.AI_BASE_URL || "https://router.huggingface.co/v1").replace(/\/+$/, "");
+    // A broken OpenAI-compatible setup (no key / non-URL base) falls back to Anthropic when its key exists.
+    const usable = process.env.AI_API_KEY && /^https?:\/\//i.test(baseUrl);
+    if (usable || !process.env.ANTHROPIC_API_KEY) {
+      return {
+        provider: "openai",
+        apiKey: process.env.AI_API_KEY,
+        baseUrl,
+        model: process.env.AI_MODEL || "meta-llama/Llama-3.3-70B-Instruct",
+      };
+    }
+    console.error("[ai] AI_PROVIDER=openai is misconfigured; falling back to Anthropic");
   }
   return {
     provider: "anthropic",
     apiKey: process.env.ANTHROPIC_API_KEY || process.env.AI_API_KEY,
-    model: process.env.ANTHROPIC_MODEL || process.env.AI_MODEL || "claude-opus-4-8",
+    model:
+      process.env.ANTHROPIC_MODEL ||
+      (/^claude-/.test(process.env.AI_MODEL || "") ? process.env.AI_MODEL : "") ||
+      "claude-opus-4-8",
   };
 }
 
