@@ -25,3 +25,5 @@ dist-ssr
 
 # Raw source models (the site uses the compressed copy in public/)
 projects/*.glb
+# Raw screen captures (cropped copies are used instead)
+projects/emergency-response-routing/cover-*.png

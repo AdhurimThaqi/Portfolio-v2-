@@ -31,7 +31,7 @@ set `"hidden": true`.
 | `liveUrl`   |     | Link to the live website |
 | `playUrl`   |     | Link to a playable build (e.g. itch.io) — adds a **Play** button |
 | `videoUrl`  |     | YouTube, Vimeo or Google Drive link — embeds a video in the popup (Drive files must be shared "Anyone with the link") |
-| `docsUrl`   |     | Link to project documentation — adds a **Documentation** button |
+| `docsUrl`   |     | Link to project documentation — adds a **Read more** button |
 | `hidden`    |     | `true` hides the project |
 
 Keep images under ~500 KB each (1600px wide is plenty) so the site stays fast.
