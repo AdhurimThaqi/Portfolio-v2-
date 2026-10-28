@@ -46,7 +46,7 @@ function secretReply(message) {
   const msg = ` ${norm(message)} `;
   for (const s of Array.isArray(list) ? list : []) {
     const trigger = norm(s?.match || "");
-    if (trigger && msg.includes(` ${trigger} `)) return String(s.reply || "");
+    if (trigger && msg.includes(` ${trigger} `)) return String(s.reply || "").trim() || null;
   }
   return null;
 }
